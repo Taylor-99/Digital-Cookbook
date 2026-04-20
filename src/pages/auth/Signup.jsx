@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
-function Register(){
+function Signup(){
 
     const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ function Register(){
             return;
         }else{
             try {
-                const response = await fetch('http://localhost:4000/auth/register', 
+                const response = await fetch('http://localhost:4000/auth/signup', 
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -143,4 +143,4 @@ function Register(){
     )
 }
 
-export default Register
+export default Signup

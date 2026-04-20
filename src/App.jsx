@@ -2,30 +2,45 @@ import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import "./App.css";
+
+import PublicLayout from './layouts/PublicLayout';
+import PrivateLayout from './layouts/PrivateLayout';
+import ProtectedRoute from './components/Protectedroute';
+
 import Home from "./pages/Home"
 import Login from "./pages/auth/Login"
-import Register from "./pages/auth/Register"
-import ProtectedRoute from './components/Protectedroute'
+import Signup from "./pages/auth/Signup"
+import Recipes from "./pages/Recipes"
+import Collections from "./pages/Collections"
+import Search from "./pages/Search"
+import AddRecipe from "./pages/AddRecipe"
 
 function App() {
 
   return (
     <div>
-      <Routes>
-        
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Routes>
+          
+          <Route element={<PublicLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
 
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+          <Route
+            element={
+              <ProtectedRoute>
+                <PrivateLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<Home />} />
+            <Route path="/recipes" element={<Recipes />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/addrecipe" element={<AddRecipe />} />
+          </Route>
+        </Routes>
     </div>
   );
 }
