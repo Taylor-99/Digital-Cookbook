@@ -1,6 +1,18 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const PrivateNavbar = () => {
+
+  const navigate = useNavigate();
+
+
+  const handleLogout = async () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    navigate('/login');
+    };
+
   return (
     <nav>
 
@@ -11,7 +23,14 @@ const PrivateNavbar = () => {
       <li><a href="/collections">Collections</a></li>
       <li><a href="/search">Search</a></li>
       <li><a href="/addrecipe">Add Recipe</a></li>
-      <li><a href="/logout">Logout</a></li>
+      <li>< input 
+              type="button"
+              onClick={() => {
+                  handleLogout(); 
+              }}
+              value = "Logout"
+        />
+      </li>
     </ul>
   </nav>
   )
