@@ -6,7 +6,7 @@ function Login(){
 
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
+    const [loginData, setLoginData] = useState({
         username: '',
         password: ''
     });
@@ -23,7 +23,7 @@ function Login(){
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(loginData),
             });
 
             const data = await response.json();
@@ -44,8 +44,8 @@ function Login(){
     };
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData, 
+        setLoginData({
+            ...loginData, 
             [e.target.name]: e.target.value
         })
     }
@@ -68,7 +68,7 @@ function Login(){
                         type="text" 
                         name="username" 
                         placeholder="Enter your username" 
-                        value={formData.username} 
+                        value={loginData.username} 
                         onChange={handleChange}
                         required
                     />
@@ -80,7 +80,7 @@ function Login(){
                         type="password" 
                         name="password" 
                         placeholder="Enter your password" 
-                        value={formData.password} 
+                        value={loginData.password} 
                         onChange={handleChange}
                         required
                     />

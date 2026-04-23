@@ -6,7 +6,7 @@ function Signup(){
 
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
+    const [signupData, setSignupData] = useState({
         firstName:'',
         lastName:'',
         username: '',
@@ -19,7 +19,7 @@ function Signup(){
     const handleSignup = async (e) => {
         event.preventDefault();
 
-        if(formData.password !== formData.confirmPassword){
+        if(signupData.password !== signupData.confirmPassword){
             setError("Passwords do not match");
             return;
         }else{
@@ -31,7 +31,7 @@ function Signup(){
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(signupData),
                 });
     
                 const data = await response.json();
@@ -53,8 +53,8 @@ function Signup(){
     };
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData, 
+        setSignupData({
+            ...signupData, 
             [e.target.name]: e.target.value
         })
     }
@@ -77,7 +77,7 @@ function Signup(){
                         type="text" 
                         name="firstName" 
                         placeholder="Enter your first name" 
-                        value={formData.firstName} 
+                        value={signupData.firstName} 
                         onChange={handleChange}
                         required
                     />
@@ -89,7 +89,7 @@ function Signup(){
                         type="text" 
                         name="lastName" 
                         placeholder="Enter your last name" 
-                        value={formData.lastName} 
+                        value={signupData.lastName} 
                         onChange={handleChange}
                         required
                     />
@@ -101,7 +101,7 @@ function Signup(){
                         type="text" 
                         name="username" 
                         placeholder="Enter your username" 
-                        value={formData.username} 
+                        value={signupData.username} 
                         onChange={handleChange}
                         required
                     />
@@ -113,7 +113,7 @@ function Signup(){
                         type="password" 
                         name="password" 
                         placeholder="Enter your password" 
-                        value={formData.password} 
+                        value={signupData.password} 
                         onChange={handleChange}
                         required
                     />
@@ -125,7 +125,7 @@ function Signup(){
                         type="password" 
                         name="confirmPassword" 
                         placeholder="Enter your password" 
-                        value={formData.confirmPassword} 
+                        value={signupData.confirmPassword} 
                         onChange={handleChange}
                         required
                     />
