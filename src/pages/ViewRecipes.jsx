@@ -43,7 +43,7 @@ function ViewRecipe() {
   return (
     <div>
 
-      <h1>ViewRecipe Page</h1>
+      <h1>View Recipe Page</h1>
 
       <h2>{recipe.title}</h2>
       <img src={recipe.image} alt={recipe.image}></img>
@@ -55,7 +55,7 @@ function ViewRecipe() {
 
       <h3>Ingredients: </h3>
 
-      {console.log(recipe.ingredients)}
+      {/* {console.log(recipe.ingredients)} */}
 
       <ul>
       {recipe.ingredients && recipe.ingredients.map((ingredient, index) => {

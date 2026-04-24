@@ -32,7 +32,7 @@ function Recipes() {
 
     }, [token]);
 
-    console.log(recipeData);
+    // console.log(recipeData);
     if (isLoading) return <p>Loading...</p>
     if (!recipeData) return <p>No Recipes to show</p>
 

@@ -19,7 +19,7 @@ function AddRecipe() {
     source: "user"
   });
 
-  const [ingredientsData, setingredientsData] = useState(
+  const [ingredientsData, setIngredientsData] = useState(
     [
         {
       name: "",
@@ -29,7 +29,7 @@ function AddRecipe() {
     ]
   );
 
-  const [instructionsData, setinstructionsData] = useState(
+  const [instructionsData, setInstructionsData] = useState(
     [
       {
         step: "",
@@ -53,8 +53,9 @@ function AddRecipe() {
         headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(recipe),
+        },
+        body: JSON.stringify(recipe),
+
       });
 
       await response.json();
@@ -71,18 +72,18 @@ function AddRecipe() {
   };
 
   const addIngredient = () => {
-    setingredientsData([...ingredientsData, {name: "", amount: "", unit: ""}]);
+    setIngredientsData([...ingredientsData, {name: "", amount: "", unit: ""}]);
   };
   const removeIngredient = (index )=> {
-    setingredientsData(ingredientsData.filter((_, i) => i !== index));
+    setIngredientsData(ingredientsData.filter((_, i) => i !== index));
   };
 
   const addInstruction = () => {
-    setinstructionsData([...instructionsData, {step: ""}]);
+    setInstructionsData([...instructionsData, {step: ""}]);
   };
 
   const removeInstruction = (index) => {
-    setinstructionsData(instructionsData.filter((_, i) => i !== index));
+    setInstructionsData(instructionsData.filter((_, i) => i !== index));
   };
 
   const handleRecipeChange = (e) => {
@@ -95,13 +96,13 @@ function AddRecipe() {
   const handleIngredientChange = (index, field, value) => {
     const updated = [...ingredientsData];
     updated[index][field] = value;
-    setingredientsData(updated);
+    setIngredientsData(updated);
   };
 
   const handleInstructionChange = (index, value) => {
     const updated = [...instructionsData];
     updated[index].step = value;
-    setinstructionsData(updated);
+    setInstructionsData(updated);
   }
 
   return (
@@ -115,7 +116,7 @@ function AddRecipe() {
 
       <section>
 
-        {error && <p className="text-red-500" >{error}</p>}
+        {error && <p>{error}</p>}
 
             <form
               encType = 'multipart/formdata'
