@@ -14,6 +14,7 @@ import Recipes from "./pages/Recipes"
 import Collections from "./pages/Collections"
 import Search from "./pages/Search"
 import AddRecipe from "./pages/AddRecipe"
+import ViewRecipe from "./pages/ViewRecipes"
 
 function App() {
 
@@ -39,6 +40,7 @@ function App() {
             <Route path="/collections" element={<Collections />} />
             <Route path="/search" element={<Search />} />
             <Route path="/addrecipe" element={<AddRecipe />} />
+            <Route path="/recipe/:recipeID" element={<ViewRecipe />} />
           </Route>
         </Routes>
     </div>

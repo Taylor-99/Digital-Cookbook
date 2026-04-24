@@ -7,7 +7,7 @@ function AddRecipe() {
   let navigate = useNavigate();
 
   const [error, setError] = useState('');
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
 
   const [recipeData, setRecipeData] = useState({
     title: "",
