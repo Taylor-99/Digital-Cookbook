@@ -5,6 +5,8 @@ import '../index.css'
 
 function EditRecipe() {
 
+  let navigate = useNavigate();
+
   const token = localStorage.getItem("token");
   const { recipeID } = useParams();
 
@@ -73,8 +75,7 @@ function EditRecipe() {
 
   }, [recipeID]);
 
-  const handleRecipeUpdate = async (event) => {
-    event.preventDefault();
+  const handleRecipeUpdate = async () => {
 
     try{
       const updatedRecipe = {
@@ -83,7 +84,7 @@ function EditRecipe() {
         instructions: updateInstructionsData,
       };
   
-      fetch(`http://localhost:4000/recipe/${recipeID}`, {
+      const response = await fetch(`http://localhost:4000/recipe/${recipeID}`, {
         method: "PUT",
         headers:{
           'Content-Type': 'application/json',

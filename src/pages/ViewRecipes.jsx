@@ -38,7 +38,7 @@ function ViewRecipe() {
   if (isLoading) return <p>Loading...</p>
   if (!recipe) return <p>No Recipe data</p>
 
-  // console.log(recipe);
+  console.log(recipe);
 
   return (
     <div>
