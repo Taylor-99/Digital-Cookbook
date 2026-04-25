@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router";
 import '../index.css'
 
 function Recipes() {
+
+  let navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
@@ -66,9 +69,9 @@ function Recipes() {
         })}
             <li>
 
-              <a href="/addrecipe">
-                + Add Recipe
-              </a>
+      <button onClick={() => navigate('/addrecipe')}>
+        + Add Recipe
+      </button>
 
             </li>
 

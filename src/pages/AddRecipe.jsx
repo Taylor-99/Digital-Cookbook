@@ -108,9 +108,9 @@ function AddRecipe() {
   return (
     <div>
 
-      {/* <button onClick={() => router.back()}>
-            Go Back
-        </button> */}
+      <button onClick={() => navigate(-1)}>
+        Go Back
+      </button>
 
       <h2>Add New Recipe</h2>
 

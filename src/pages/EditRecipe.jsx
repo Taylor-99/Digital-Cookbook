@@ -144,6 +144,10 @@ function EditRecipe() {
 
       <h1>Edit Recipe Page</h1>
 
+      <button onClick={() => navigate(-1)}>
+        Go Back
+      </button>
+
       <section>
 
         {error && <p>{error}</p>}

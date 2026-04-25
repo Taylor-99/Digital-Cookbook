@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router";
 import '../index.css'
 
 function ViewRecipe() {
+
+  let navigate = useNavigate();
 
   const token = localStorage.getItem("token");
   const { recipeID } = useParams();
@@ -35,6 +38,33 @@ function ViewRecipe() {
     }
   }, [recipeID]);
 
+  const handleDeleteRecipe = async () => {
+    const confirmed = window.confirm (
+      "Are you sure you want to delete this recipe?"
+    );
+
+    if(!confirmed) return;
+
+    try{
+      const response = await fetch(`http://localhost:4000/recipe/${recipeID}`, {
+        method: "DELETE",
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      if (response.ok) {
+        navigate("/recipes");
+      } else{
+        alert("failed to delete recipe.");
+      }
+    }catch (error) {
+      console.error(error);
+    }
+  }
+
   if (isLoading) return <p>Loading...</p>
   if (!recipe) return <p>No Recipe data</p>
 
@@ -44,6 +74,10 @@ function ViewRecipe() {
     <div>
 
       <h1>View Recipe Page</h1>
+
+      <button onClick={() => navigate(-1)}>
+        Go Back
+      </button>
 
       <h2>{recipe.title}</h2>
       <img src={recipe.image} alt={recipe.image}></img>
@@ -83,6 +117,13 @@ function ViewRecipe() {
 
       })}
       </ol>
+
+      <button onClick={() => navigate(`/recipe/edit/${recipe.recipe_id}`)}>
+        Edit Recipe
+      </button>
+      <button onClick={handleDeleteRecipe}>
+        Delete Recipe
+      </button>
 
     </div>
   )
