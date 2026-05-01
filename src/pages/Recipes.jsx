@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import '../index.css'
 
 function Recipes() {
@@ -14,6 +14,8 @@ function Recipes() {
   useEffect(() => {
 
         const fetchRecipes = async () => {
+
+          console.log("in fetch")
     
             try {
                 const response = await fetch('http://localhost:4000/recipe/', {
@@ -24,10 +26,13 @@ function Recipes() {
                 });
     
                 const data = await response.json()
+                console.log("data")
                 setRecipeData(data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error:', error.message);
+            }finally{
+              setLoading(false);
             }
         };
 
@@ -37,8 +42,9 @@ function Recipes() {
 
     // console.log(recipeData);
     if (isLoading) return <p>Loading...</p>
-    if (!recipeData) return <p>No Recipes to show</p>
-
+    if (!isLoading && recipeData.length === 0) {
+      return <p>No Recipes to show</p>
+    }
 
   return (
     <div>
@@ -51,14 +57,14 @@ function Recipes() {
           return (
             <li key={index}>
 
-              <a href={`recipe/${recipe.recipe_id}`}>
+              <Link to={`recipe/${recipe.recipe_id}`}>
                 <h2>{recipe.title}</h2>
                 <img src={recipe.image} alt={recipe.image}></img>
                 <p>Description: {recipe.description}</p>
                 <p>Cook Time: {recipe.cook_time} min</p>
                 <p>Prep Time: {recipe.prep_time} min</p>
                 <p>Serving Size: {recipe.serving_size}</p>
-              </a>
+              </Link>
 
               <br></br>
 
