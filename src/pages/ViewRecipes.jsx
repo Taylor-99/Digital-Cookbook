@@ -15,6 +15,8 @@ function ViewRecipe() {
   // console.log("recipeID: ", recipeID);
 
   const fetchRecipeDetails = async () => {
+
+    console.log(recipeID)
     try{
       const response = await fetch(`http://localhost:4000/recipe/${recipeID}`, {
         credentials: 'include',

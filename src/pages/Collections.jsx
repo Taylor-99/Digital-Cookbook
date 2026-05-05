@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from "react-router";
+import CollectionForm from "../components/CollectionForm"
 import '../index.css'
 
 function Collections() {
@@ -10,6 +11,7 @@ function Collections() {
 
   const [collectionData, setCollectionData] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
 
@@ -19,7 +21,7 @@ function Collections() {
                 const response = await fetch('http://localhost:4000/collection/', {
                     credentials: 'include',
                     headers: {
-                        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`, 
                     }
                 });
     
@@ -36,10 +38,38 @@ function Collections() {
 
     }, [token]);
 
+    const handleAddCollection = async (newCollection) => {
+      // setCollectionData(prev => [...prev, newCollection]);
+
+      console.log("New Collection: ", newCollection);
+
+      try{
+        const response = await fetch('http://localhost:4000/collection/create', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+
+          body: JSON.stringify(newCollection)
+        });
+
+        const savedCollection = await response.json();
+        console.log("FROM BACKEND", savedCollection);
+
+        setCollectionData((prev) => [...prev, savedCollection]);
+
+        console.log("STATE AFTER: ", collectionData);
+
+      } catch (error){
+        console.error("Error creating collection: ", error)
+      }
+    };
+
+
+
   if (isLoading) return <p>Loading...</p>
-  // if (collectionData.length === 0){
-  //   return <p>No Collections to show</p>
-  // }
+  console.log(collectionData)
 
   return (
     <div>
@@ -77,9 +107,17 @@ function Collections() {
       )}
 
       <div>
-        <button onClick={() => navigate('/createcollection')}>
-            + Create Collection
-          </button>
+        <button onClick={() => setShowForm(true)}>
+          + Create Collection
+        </button>
+
+        {showForm && (
+          <CollectionForm
+            onClose={() => setShowForm(false)}
+            onAdd={handleAddCollection}
+          />
+        )}
+
       </div>
 
     </div>

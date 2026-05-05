@@ -5,7 +5,6 @@ import '../index.css'
 function Recipes() {
 
   let navigate = useNavigate();
-
   const token = localStorage.getItem("token");
 
   const [recipeData, setRecipeData] = useState([]);
@@ -15,7 +14,7 @@ function Recipes() {
 
         const fetchRecipes = async () => {
 
-          console.log("in fetch")
+          // console.log("in fetch")
     
             try {
                 const response = await fetch('http://localhost:4000/recipe/', {
@@ -26,7 +25,7 @@ function Recipes() {
                 });
     
                 const data = await response.json()
-                console.log("data")
+                console.log(data)
                 setRecipeData(data);
                 setLoading(false);
             } catch (error) {
@@ -57,7 +56,7 @@ function Recipes() {
           return (
             <li key={index}>
 
-              <Link to={`recipe/${recipe.recipe_id}`}>
+              <Link to={`/recipe/${recipe.recipe_id}`}>
                 <h2>{recipe.title}</h2>
                 <img src={recipe.image} alt={recipe.image}></img>
                 <p>Description: {recipe.description}</p>
