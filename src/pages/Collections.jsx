@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link } from "react-router-dom";
 import CollectionForm from "../components/CollectionForm"
 import '../index.css'
 
 function Collections() {
 
-  let navigate = useNavigate();
+  // let navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
