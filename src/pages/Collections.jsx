@@ -18,7 +18,7 @@ function Collections() {
         const fetchCollections = async () => {
     
             try {
-                const response = await fetch('http://localhost:4000/collection/', {
+                const response = await fetch('http://localhost:4000/collections/', {
                     credentials: 'include',
                     headers: {
                         Authorization: `Bearer ${token}`, 
@@ -44,7 +44,7 @@ function Collections() {
       console.log("New Collection: ", newCollection);
 
       try{
-        const response = await fetch('http://localhost:4000/collection/create', {
+        const response = await fetch('http://localhost:4000/collections/create', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

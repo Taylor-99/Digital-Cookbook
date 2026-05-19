@@ -15,11 +15,11 @@ function ViewRecipe() {
   // console.log("recipeID: ", recipeID);
   const [collectionData, setCollectionData] = useState([]);
   const [showCollectionDropdown, setShowCollectionDropdown] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [savedCollections, setSavedCollections] = useState([]);
 
   const fetchRecipeDetails = async () => {
 
-    console.log(recipeID)
+    // console.log(recipeID)
     try{
       const response = await fetch(`http://localhost:4000/recipe/${recipeID}`, {
         credentials: 'include',
@@ -48,7 +48,7 @@ function ViewRecipe() {
     const fetchCollections = async () => {
 
         try {
-            const response = await fetch('http://localhost:4000/collection/', {
+            const response = await fetch('http://localhost:4000/collections/', {
                 credentials: 'include',
                 headers: {
                     Authorization: `Bearer ${token}`, 
@@ -67,6 +67,40 @@ function ViewRecipe() {
     fetchCollections();
 
   }, [token]);
+
+  useEffect(() => {
+
+    const checkIfSaved = async () => {
+
+        try {
+
+            const res = await fetch(
+                `http://localhost:4000/collections/collectionsrecipe/${recipeID}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await res.json();
+
+            // console.log("is saved: ", data)
+
+              setSavedCollections(data);
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+    };
+
+    if (recipeID) {
+        checkIfSaved();
+    }
+
+}, [recipeID, token]);
 
   const handleDeleteRecipe = async () => {
     const confirmed = window.confirm (
@@ -95,48 +129,73 @@ function ViewRecipe() {
     }
   };
 
-  const handleCollectionToggle = async (collectionId) => {
+  const handleCollectionToggle = async (
+    collectionId,
+    isSaved
+  ) => {
 
-    if (isSaved) {
+    try {
 
-      await fetch(`http://localhost:4000/collections/`)
+      if (isSaved) {
 
-    } else {
-
-      try{
-  
-        const res = await fetch(
-          `http://localhost:4000/collections/${collectionId}/recipe`,
+        // REMOVE RECIPE
+        await fetch(
+          `http://localhost:4000/collections/${collectionId}/recipes/${recipeID}`,
           {
-            method: "POST",
+            method: "DELETE",
             headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              recipe_id: recipe.recipe_id
-            })
+                Authorization: `Bearer ${token}`
+            }
           }
         );
-  
-        const data = await res.json();
-  
-        console.log(data);
 
-        setIsSaved(true);
-  
-      }catch (err) {
-  
+        // update local state
+        setSavedCollections((prev) =>
+          prev.filter(
+            (collection) => collection.collection_id !== collectionId
+          )
+        );
+
+        } else {
+
+          // SAVE RECIPE
+          await fetch(
+            `http://localhost:4000/collections/${collectionId}/recipe`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+                body: JSON.stringify({
+                    recipe_id: recipeID
+                })
+            }
+          );
+
+          // add locally
+          const addedCollection = collectionData.find(
+              (collection) =>
+                  collection.collection_id === collectionId
+          );
+
+          setSavedCollections((prev) => [
+              ...prev,
+              addedCollection
+          ]);
+        }
+
+    } catch (err) {
+
         console.error(err);
-  
-      }
+
     }
-  };
+};
 
   if (isLoading) return <p>Loading...</p>
   if (!recipe) return <p>No Recipe data</p>
 
-  console.log(recipe);
+  // console.log(recipe);
 
   return (
     <div>
@@ -149,21 +208,47 @@ function ViewRecipe() {
 
       <h2>{recipe.title}</h2>
 
-      <button onClick={() => setShowCollectionDropdown(!showCollectionDropdown)}>
-        Save to Collection
+      <button
+        onClick={() =>
+          setShowCollectionDropdown(
+            !showCollectionDropdown
+          )
+        }
+      >
+        {savedCollections.length > 0
+          ? "Saved"
+          : "Save To Collection ▼"
+        }
       </button>
 
       {showCollectionDropdown && (
-        <div>
 
-          {collectionData.map((collection) => (
-            <button 
-              key={collection.collection_id}
-              onClick={() => handleSaveRecipetoCollection(collection.collection_id)}
-            >
+        <div className="collection-dropdown">
+
+          {collectionData.map((collection) => {
+
+            const isSaved = savedCollections.some(
+              (savedCollection) => Number(savedCollection.collection_id) === Number(collection.collection_id)
+            );
+
+
+            return (
+
+              <button
+                key={collection.collection_id}
+                  onClick={() => handleCollectionToggle(
+                    collection.collection_id,
+                    isSaved
+                  )
+                }
+              >
+
+              {isSaved ? "✓ " : "+ "}
               {collection.collection_name}
-            </button>
-          ))}
+
+              </button>
+                );
+          })}
 
         </div>
       )}
