@@ -2,20 +2,20 @@ import React from 'react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function CollectionForm({ onClose, onAdd }) {
+function CollectionForm({ onClose, onSubmit, initialData }) {
 
     let navigate = useNavigate();
     const token = localStorage.getItem("token");
 
     const [collectionForm, setCollectionForm] = useState({
-        collection_name: "",
-        description: ""
+        collection_name: initialData?.collection_name || "",
+        description: initialData?.description || ""
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        onAdd(collectionForm);
+        onSubmit(collectionForm);
         onClose();
     };
 

@@ -97,7 +97,7 @@ function EditRecipe() {
 
         if (response.ok) {
           // Redirect or perform an action on successful login
-          navigate('/')
+          navigate(`/recipe/${recipeID}`)
         };
     }catch (err) {
       setError('Network error: ' + err.message);
@@ -261,6 +261,13 @@ function EditRecipe() {
                       handleIngredientChange(index, "unit", e.target.value)
                     }
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      Remove
+                    </button>
+
                   </div>
                 ))}
                 <br></br>
@@ -279,6 +286,12 @@ function EditRecipe() {
                         handleInstructionChange(index, e.target.value)
                       }
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeInstruction(index)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
 

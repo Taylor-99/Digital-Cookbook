@@ -227,6 +227,12 @@ function AddRecipe() {
                       handleIngredientChange(index, "unit", e.target.value)
                     }
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
                 <br></br>
@@ -245,6 +251,12 @@ function AddRecipe() {
                         handleInstructionChange(index, e.target.value)
                       }
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeInstruction(index)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
 

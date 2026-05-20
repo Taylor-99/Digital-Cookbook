@@ -25,7 +25,7 @@ function Recipes() {
                 });
     
                 const data = await response.json()
-                console.log(data)
+                // console.log(data)
                 setRecipeData(data);
                 setLoading(false);
             } catch (error) {
@@ -57,12 +57,19 @@ function Recipes() {
             <li key={index}>
 
               <Link to={`/recipe/${recipe.recipe_id}`}>
+              
                 <h2>{recipe.title}</h2>
+
                 <img src={recipe.image} alt={recipe.image}></img>
-                <p>Description: {recipe.description}</p>
-                <p>Cook Time: {recipe.cook_time} min</p>
-                <p>Prep Time: {recipe.prep_time} min</p>
-                <p>Serving Size: {recipe.serving_size}</p>
+
+                <p><span>Description: </span>{recipe.description}</p>
+
+                <p><span>Cook Time: </span>{recipe.cook_time} min</p>
+
+                <p><span>Prep Time: </span>{recipe.prep_time} min</p>
+
+                <p><span>Serving Size: </span>{recipe.serving_size}</p>
+
               </Link>
 
               <br></br>

@@ -56,6 +56,7 @@ function ViewRecipe() {
             });
 
             const data = await response.json()
+            // console.log(data)
             setCollectionData(data);
             setLoading(false);
         } catch (error) {
@@ -138,9 +139,12 @@ function ViewRecipe() {
 
       if (isSaved) {
 
+        console.log(collectionId)
+        console.log(recipeID)
+
         // REMOVE RECIPE
         await fetch(
-          `http://localhost:4000/collections/${collectionId}/recipes/${recipeID}`,
+          `http://localhost:4000/collections/${collectionId}/recipe/${recipeID}`,
           {
             method: "DELETE",
             headers: {
@@ -179,10 +183,20 @@ function ViewRecipe() {
                   collection.collection_id === collectionId
           );
 
-          setSavedCollections((prev) => [
-              ...prev,
-              addedCollection
-          ]);
+          setSavedCollections((prev) => {
+
+            const alreadySaved = prev.some(
+              (collection) =>
+                collection.collection_id === collectionId
+            );
+
+            if (alreadySaved) {
+              return prev;
+            }
+
+            return [...prev, addedCollection];
+          });
+
         }
 
     } catch (err) {
@@ -228,9 +242,10 @@ function ViewRecipe() {
           {collectionData.map((collection) => {
 
             const isSaved = savedCollections.some(
-              (savedCollection) => Number(savedCollection.collection_id) === Number(collection.collection_id)
+              (savedCollection) => 
+                Number(savedCollection.collection_id) === 
+                Number(collection.collection_id)
             );
-
 
             return (
 
