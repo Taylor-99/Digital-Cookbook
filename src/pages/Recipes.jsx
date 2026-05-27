@@ -60,7 +60,7 @@ function Recipes() {
               
                 <h2>{recipe.title}</h2>
 
-                <img src={recipe.image} alt={recipe.image}></img>
+                <img src={recipe.image} alt={recipe.title}></img>
 
                 <p><span>Description: </span>{recipe.description}</p>
 

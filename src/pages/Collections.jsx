@@ -5,7 +5,7 @@ import '../index.css'
 
 function Collections() {
 
-  // let navigate = useNavigate();
+  let navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 

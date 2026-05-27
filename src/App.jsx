@@ -13,8 +13,9 @@ import Signup from "./pages/auth/Signup"
 import Recipes from "./pages/Recipes"
 import Collections from "./pages/Collections"
 import Search from "./pages/Search"
+import ViewSearchRecipe from "./pages/ViewSearchRecipe"
 import AddRecipe from "./pages/AddRecipe"
-import ViewRecipe from "./pages/ViewRecipes"
+import ViewRecipe from "./pages/ViewRecipe"
 import EditRecipe from "./pages/EditRecipe"
 import ViewCollection from "./pages/ViewCollection"
 
@@ -45,6 +46,7 @@ function App() {
             <Route path="/collections" element={<Collections />} />
             <Route path="/collection/:collectionID" element={<ViewCollection />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/search/:recipeID" element={<ViewSearchRecipe />} />
           </Route>
         </Routes>
     </div>
