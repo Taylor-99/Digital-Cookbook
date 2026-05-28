@@ -12,230 +12,136 @@ function ViewSearchRecipe() {
 
     const [isLoading, setLoading] = useState(true);
     const[recipeData, setRecipeData] = useState(null);
-    const [similarRecipes, setSimilarRecipes] = useState([])
+    const [similarRecipes, setSimilarRecipes] = useState([]);
 
-    const [isSavedtoRecipes, setIsSavedtoRecipes] = useState(false);
-    const [isSavedtoCollection, setIsSavedtoCollection] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
     const [savedRecipeID, setSavedRecipeID] = useState(null);
-    const [showCollectionDropdown, setShowCollectionDropdown] = useState(false);
-    const [savedCollections, setSavedCollections] = useState([]);
-    const [collectionData, setCollectionData] = useState([]);
+
+    const [collections, setCollections] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     console.log("Recipe ID: ", recipeID);
 
-    const mockRecipe = {
-    id: 13214235,
-    title: "Chocolate Pudding",
-    image: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc",
-    summary: "A rich and creamy chocolate pudding dessert.",
-    readyInMinutes: 25,
-    servings: 4,
-    instructions:
-        "Combine water, maple syrup, cocoa, cornstarch or corn flour and vanilla together in a saucepan.\nWhisk smooth with a spoon or hand whisker.\nCook over medium heat and stir constantly until pudding is very thick.\nPour into dessert dishes and top with chopped hazelnuts.\nCool and serve.",
-    extendedIngredients: [
-        {
-            amount: 2,
-            measure: {
-                us: {
-                    unitShort: "cups"
-                }
-            },
-            name: "water"
-        },
-        {
-            amount: 3,
-            measure: {
-                us: {
-                    unitShort: "tbsp"
-                }
-            },
-            name: "cocoa powder"
-        }
-    ]
-};
+    const fetchRecipeDetails = async () => {
 
-const mockSimilarRecipes = [
-    {
-        id: 2454325,
-        title: "Vanilla Pudding",
-        image: "https://images.unsplash.com/photo-1488477181946-6428a0291777",
-        readyInMinutes: 15,
-        servings: 2
-    },
-    {
-        id: 3421341,
-        title: "Chocolate Cake",
-        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587",
-        readyInMinutes: 45,
-        servings: 8
-    }
-];
+        console.log(recipeID)
+        try{
+            // const response = await fetch(`http://localhost:4000/search/${recipeID}`, {
+            //     credentials: 'include',
+            //     headers: {
+            //     Authorization: `Bearer ${token}`,
+            //     }
+            // });
 
-    // const fetchRecipeDetails = async () => {
-
-    //     // console.log(recipeID)
-    //     try{
-    //     const response = await fetch(`http://localhost:4000/search/${recipeID}`, {
-    //         credentials: 'include',
-    //         headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         }
-    //     });
-
-    //     const data = await response.json();
-    //     setRecipeData(data.recipe);
-    //     setSimilarRecipes(data.similarRecipes);
-    //     setLoading(false);
-
-    //     } catch (error){
-    //     console.error('Error: ', error.message);
-    //     }
-    // };
-
-    // const checkIfSavedtoRecipe = async () => {
-
-    //     try {
-
-    //         const response = await fetch(
-    //             `http://localhost:4000/search/${recipeID}/saved`,
-    //             {
-    //                 credentials: 'include',
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`,
-    //                 }
-    //             }
-    //         );
-
-    //         const data = await response.json();
-
-    //         setIsSavedtoRecipes(data.saved);
-    //           setSavedRecipeID(data.recipeID);
-
-    //     } catch (error) {
-
-    //         console.error(error.message);
-
-    //     }
-
-    // };
-
-    // useEffect(() => {
-
-    //     if (recipeID) {
-    //         fetchRecipeDetails();
-    //         checkIfSavedtoRecipe();
-    //     }
-
-    // }, [recipeID]);
-
-    useEffect(() => {
-
-        setRecipeData(mockRecipe);
-        setSimilarRecipes(mockSimilarRecipes);
-        setIsSavedtoRecipes(true);
-
-        setLoading(false);
-        setSavedRecipeID(mockRecipe.id)
-
-        fetchCollections()
-
-    }, [token]);
-
-    console.log("Saved ID: ", savedRecipeID);
-
-    const fetchCollections = async () => {
-
-        try {
-            const response = await fetch('http://localhost:4000/collections/', {
-                credentials: 'include',
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                }
-            });
-
-            const data = await response.json()
-            // console.log(data)
-            setCollectionData(data);
+            const data = await response.json();
+            setRecipeData(data.recipe);
+            setSimilarRecipes(data.similarRecipes);
             setLoading(false);
-        } catch (error) {
-            console.error('Error:', error.message);
+
+        } catch (error){
+            console.error('Error: ', error.message);
         }
     };
 
-    const handleCollectionToggle = async (
-        collectionId,
-        isSaved
-    ) => {
+    const checkIfSaved = async () => {
 
         try {
 
-        if (isSaved) {
-
-            console.log(collectionId)
-            console.log(recipeID)
-
-            // REMOVE RECIPE
-            await fetch(
-            `http://localhost:4000/collections/${collectionId}/recipe/${savedRecipeID}`,
-            {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-            );
-
-            // update local state
-            setSavedCollections((prev) =>
-            prev.filter(
-                (collection) => collection.collection_id !== collectionId
-            )
-            );
-
-        } else {
-
-            // SAVE RECIPE
-            await fetch(
-                `http://localhost:4000/collections/${collectionId}/recipe`,
+            const response = await fetch(
+                `http://localhost:4000/search/${recipeID}/saved`,
                 {
-                method: "POST",
+                    credentials: 'include',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            setIsSaved(data.saved);
+            setSavedRecipeID(data.recipeID);
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    };
+
+    const fetchCollections = async () => {
+        try {
+            const response = await fetch("http://localhost:4000/collections", {
+                credentials: "include",
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
+            });
+
+            const data = await response.json();
+            setCollections(data);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchCollections();
+    }, []);
+
+    useEffect(() => {
+
+        if (recipeID) {
+            fetchRecipeDetails();
+            checkIfSaved();
+            fetchCollections();
+        }
+
+    }, [recipeID]);
+
+    const handleSaveRecipe = async () => {
+
+        try {
+
+            const response = await fetch(
+                "http://localhost:4000/search/save",
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                     body: JSON.stringify({
-                        recipe_id: savedRecipeID
+
+                        title: recipeData.title,
+                        image: recipeData.image,
+                        cook_time: recipeData.readyInMinutes,
+                        prep_time: null,
+                        serving_size: recipeData.servings,
+                        description: recipeData.summary
+                            ?.replace(/<[^>]*>/g, ""),
+                        spoonacular_id: recipeData.id
+
                     })
                 }
             );
 
-            // add locally
-            const addedCollection = collectionData.find(
-                (collection) =>
-                    collection.collection_id === collectionId
-            );
+            const data = await response.json();
 
-            setSavedCollections((prev) => {
+            setIsSaved(true);
 
-                const alreadySaved = prev.some(
-                (collection) =>
-                    collection.collection_id === collectionId
-                );
+            // this is your DB recipe ID
+            setSavedRecipeID(data.recipeid);
 
-                if (alreadySaved) {
-                return prev;
-                }
+        } catch (error) {
 
-                return [...prev, addedCollection];
-            });
+            console.error(error);
 
         }
 
-        } catch (err) {
-
-            console.error(err);
-
-        }
     };
 
     const handleDeleteRecipe = async () => {
@@ -246,22 +152,52 @@ const mockSimilarRecipes = [
         if(!confirmed) return;
 
         try{
-        const response = await fetch(`http://localhost:4000/search/${savedRecipeID}`, {
-            method: "DELETE",
-            credentials: 'include',
-            headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            }
-        });
+            const response = await fetch(`http://localhost:4000/recipe/${savedRecipeID}`, {
+                method: "DELETE",
+                credentials: 'include',
+                headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+                }
+            });
 
-        if (response.ok) {
-            navigate(`/search/${recipeID}`);
-        } else{
-            alert("failed to delete recipe.");
-        }
+            if (response.ok) {
+
+                setIsSaved(false);
+
+                setSavedRecipeID(null);
+
+            } else {
+
+                alert("failed to delete recipe.");
+
+            }
         }catch (error) {
-        console.error(error);
+            console.error(error);
+        }
+    };
+
+    const handleAddToCollection = async (collectionId) => {
+        try {
+            await fetch(
+                `http://localhost:4000/collections/${collectionId}/recipe`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        recipe_id: savedRecipeID,
+                    }),
+                }
+            );
+
+            setShowDropdown(false);
+
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -283,80 +219,57 @@ const mockSimilarRecipes = [
         <div>
             
             <h1>ViewSearchRecipe</h1>
+
             <h2>{recipeData.title}</h2>
 
-            {isSavedtoRecipes ? (
+            {isSaved ? (
 
                 <>
-
-                    <button>
-                        Saved
-                    </button>
-
                     <button onClick={handleDeleteRecipe}>
                         Remove Recipe
                     </button>
 
-                    <br />
-                    <br />
+                    {isSaved && savedRecipeID && (
+                        <div>
+                            <button onClick={() => setShowDropdown(prev => !prev)}>
+                                Add to Collection ▼
+                            </button>
 
-                    <button
-                        onClick={() =>
-                            setShowCollectionDropdown(
-                                !showCollectionDropdown
-                            )
-                        }
-                    >
-                        Save To Collection ▼
-                    </button>
-
-                    {showCollectionDropdown && (
-
-                        <div className="collection-dropdown">
-
-                            {collectionData.map((collection) => {
-
-                                const isSaved = savedCollections.some(
-                                    (savedCollection) =>
-                                        Number(savedCollection.collection_id) ===
-                                        Number(collection.collection_id)
-                                );
-
-                                return (
-
-                                    <button
-                                        key={collection.collection_id}
-                                        onClick={() =>
-                                            handleCollectionToggle(
-                                                collection.collection_id,
-                                                isSaved
-                                            )
-                                        }
-                                    >
-
-                                        {isSaved ? "✓ " : "+ "}
-                                        {collection.collection_name}
-
-                                    </button>
-
-                                );
-                            })}
-
+                            {showDropdown && (
+                                <div className="dropdown">
+                                    {collections.map((collection) => (
+                                        <button
+                                            key={collection.collection_id}
+                                            onClick={() =>
+                                                handleAddToCollection(collection.collection_id)
+                                            }
+                                        >
+                                            {collection.collection_name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-
                     )}
-
                 </>
 
-    ) : (
+            ) : (
 
-        <button>Save Recipe</button>
+                <button onClick={handleSaveRecipe}>
+                    Save Recipe
+                </button>
 
-    )}
+            )}
 
             <img src={recipeData.image} alt={recipeData.title}></img>
 
-            <p><span>Description: </span>{recipeData.summary}</p>
+            <p>
+                <span>Description: </span>
+
+                {recipeData.summary
+                ?.replace(/<[^>]*>/g, "")
+                }
+            </p>
             <p><span>Ready In: </span> {recipeData.readyInMinutes} min</p>
 
             <h3>Ingredients: </h3>
@@ -365,7 +278,11 @@ const mockSimilarRecipes = [
 
                     return(
                     <li key={index}>
-                        <p>{ingredient.amount} {ingredient.measure.us.unitShort} of{" "} <span>{ingredient.name}</span></p>
+                        <p>
+                            {ingredient.amount}{" "}
+                            {ingredient.measures?.us?.unitShort || ""} of{" "}
+                            <span>{ingredient.name}</span>
+                        </p>
                     </li>
                     );
                 })}
@@ -375,18 +292,17 @@ const mockSimilarRecipes = [
                 <h2>Instructions</h2>
 
                 {recipeData.instructions ? (
-                    <ol>
-                    {recipeData.instructions
-                        .split('\n')
-                        .filter(step => step.trim() !== '')
-                        .map((step, index) => (
-                        <li key={index}>
-                            {step}
-                        </li>
-                        ))}
-                    </ol>
+
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: recipeData.instructions
+                        }}
+                    />
+
                 ) : (
+
                     <p>No instructions available.</p>
+
                 )}
             </div>
 
