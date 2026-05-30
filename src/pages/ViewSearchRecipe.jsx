@@ -19,6 +19,7 @@ function ViewSearchRecipe() {
 
     const [collections, setCollections] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [savedCollections, setSavedCollections] = useState([]);
 
     console.log("Recipe ID: ", recipeID);
 
@@ -26,12 +27,12 @@ function ViewSearchRecipe() {
 
         console.log(recipeID)
         try{
-            // const response = await fetch(`http://localhost:4000/search/${recipeID}`, {
-            //     credentials: 'include',
-            //     headers: {
-            //     Authorization: `Bearer ${token}`,
-            //     }
-            // });
+            const response = await fetch(`http://localhost:4000/search/${recipeID}`, {
+                credentials: 'include',
+                headers: {
+                Authorization: `Bearer ${token}`,
+                }
+            });
 
             const data = await response.json();
             setRecipeData(data.recipe);
@@ -43,7 +44,7 @@ function ViewSearchRecipe() {
         }
     };
 
-    const checkIfSaved = async () => {
+    const checkIfSavedtoRecipe = async () => {
 
         try {
 
@@ -70,7 +71,19 @@ function ViewSearchRecipe() {
 
     };
 
+    useEffect(() => {
+
+        if (recipeID) {
+            fetchRecipeDetails();
+            checkIfSavedtoRecipe();
+        }
+
+    }, [recipeID]);
+
     const fetchCollections = async () => {
+
+        console.log("Checking collections for recipe:", savedRecipeID);
+
         try {
             const response = await fetch("http://localhost:4000/collections", {
                 credentials: "include",
@@ -87,19 +100,45 @@ function ViewSearchRecipe() {
         }
     };
 
+    const checkIfSavedtoCollection = async () => {
+
+        if (!savedRecipeID) return;
+
+        try {
+
+            const response = await fetch(
+                `http://localhost:4000/collections/collectionsrecipe/${savedRecipeID}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            setSavedCollections(data);
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+    };
+
     useEffect(() => {
+
         fetchCollections();
+
     }, []);
 
     useEffect(() => {
 
-        if (recipeID) {
-            fetchRecipeDetails();
-            checkIfSaved();
-            fetchCollections();
+        if (savedRecipeID) {
+            checkIfSavedtoCollection();
         }
 
-    }, [recipeID]);
+    }, [savedRecipeID]);
 
     const handleSaveRecipe = async () => {
 
@@ -177,27 +216,79 @@ function ViewSearchRecipe() {
         }
     };
 
-    const handleAddToCollection = async (collectionId) => {
+    const handleCollectionToggle = async (
+        collectionId,
+        isSaved
+    ) => {
+
         try {
+
+        if (isSaved) {
+
+            console.log(collectionId)
+            console.log(recipeID)
+
+            // REMOVE RECIPE
+            await fetch(
+            `http://localhost:4000/collections/${collectionId}/recipe/${savedRecipeID}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            );
+
+            // update local state
+            setSavedCollections((prev) =>
+            prev.filter(
+                (collection) => collection.collection_id !== collectionId
+            )
+            );
+
+            } else {
+
+            // SAVE RECIPE
             await fetch(
                 `http://localhost:4000/collections/${collectionId}/recipe`,
                 {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                     body: JSON.stringify({
-                        recipe_id: savedRecipeID,
-                    }),
+                        recipe_id: savedRecipeID
+                    })
                 }
             );
 
-            setShowDropdown(false);
+            // add locally
+            const addedCollection = collections.find(
+                (collection) =>
+                    collection.collection_id === collectionId
+            );
+
+            setSavedCollections((prev) => {
+
+                const alreadySaved = prev.some(
+                (collection) =>
+                    collection.collection_id === collectionId
+                );
+
+                if (alreadySaved) {
+                return prev;
+                }
+
+                return [...prev, addedCollection];
+            });
+
+            }
 
         } catch (err) {
+
             console.error(err);
+
         }
     };
 
@@ -237,16 +328,32 @@ function ViewSearchRecipe() {
 
                             {showDropdown && (
                                 <div className="dropdown">
-                                    {collections.map((collection) => (
-                                        <button
-                                            key={collection.collection_id}
-                                            onClick={() =>
-                                                handleAddToCollection(collection.collection_id)
-                                            }
-                                        >
-                                            {collection.collection_name}
-                                        </button>
-                                    ))}
+                                    {collections.map((collection) => {
+
+                                        const isSaved = savedCollections.some(
+                                            (savedCollection) => 
+                                                Number(savedCollection.collection_id) === 
+                                                Number(collection.collection_id)
+                                            );
+
+                                            return(
+
+                                                <button
+                                                    key={collection.collection_id}
+                                                    onClick={() =>
+                                                        handleCollectionToggle(collection.collection_id,
+                                                            isSaved
+                                                        )
+                                                    }
+                                                >
+
+                                                    {isSaved ? "✓ " : "+ "}
+                                                    {collection.collection_name}
+
+                                                </button>
+
+                                            );
+                                    })}
                                 </div>
                             )}
                         </div>
