@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import '../index.css'
+import apiLogo from './assets/images/spoonacular_logo.svg'
 
 function Search() {
 
@@ -307,6 +308,12 @@ function Search() {
             <li key={recipe.id}>
 
               <Link to={`/search/${recipe.id}`}>
+
+                <img
+                  src={apiLogo}
+                  alt="API Recipe"
+                  className="api-icon"
+                />
               
                 <h2>{recipe.title}</h2>
 

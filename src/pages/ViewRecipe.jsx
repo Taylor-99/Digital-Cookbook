@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Notes from "../components/Notes"
 import '../index.css'
 
 function ViewRecipe() {
@@ -16,6 +17,10 @@ function ViewRecipe() {
   const [collectionData, setCollectionData] = useState([]);
   const [showCollectionDropdown, setShowCollectionDropdown] = useState(false);
   const [savedCollections, setSavedCollections] = useState([]);
+
+  const [showTextbox, setShowTextbox] = useState(false);
+  const [notesData, setNotesData] = useState([])
+  const [editingNote, setEditingNote] = useState(null);
 
   const fetchRecipeDetails = async () => {
 
@@ -37,9 +42,29 @@ function ViewRecipe() {
     }
   };
 
+  const fetchNotes = async () => {
+
+    // console.log(recipeID)
+    try{
+      const response = await fetch(`http://localhost:4000/recipe/notes/recipe/${recipeID}`, {
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      const data = await response.json();
+      setNotesData(data);
+
+    } catch (error){
+      console.error('Error: ', error.message);
+    }
+  };
+
   useEffect(() => {
     if(recipeID){
       fetchRecipeDetails();
+      fetchNotes()
     }
   }, [recipeID]);
 
@@ -131,80 +156,178 @@ function ViewRecipe() {
   };
 
   const handleCollectionToggle = async (
-    collectionId,
-    isSaved
-  ) => {
+      collectionId,
+      isSaved
+    ) => {
 
-    try {
+      try {
 
-      if (isSaved) {
+        if (isSaved) {
 
-        console.log(collectionId)
-        console.log(recipeID)
+          console.log(collectionId)
+          console.log(recipeID)
 
-        // REMOVE RECIPE
-        await fetch(
-          `http://localhost:4000/collections/${collectionId}/recipe/${recipeID}`,
-          {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`
+          // REMOVE RECIPE
+          await fetch(
+            `http://localhost:4000/collections/${collectionId}/recipe/${recipeID}`,
+            {
+              method: "DELETE",
+              headers: {
+                  Authorization: `Bearer ${token}`
+              }
             }
+          );
+
+          // update local state
+          setSavedCollections((prev) =>
+            prev.filter(
+              (collection) => collection.collection_id !== collectionId
+            )
+          );
+
+          } else {
+
+            // SAVE RECIPE
+            await fetch(
+              `http://localhost:4000/collections/${collectionId}/recipe`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+                },
+                  body: JSON.stringify({
+                      recipe_id: recipeID
+                  })
+              }
+            );
+
+            // add locally
+            const addedCollection = collectionData.find(
+                (collection) =>
+                    collection.collection_id === collectionId
+            );
+
+            setSavedCollections((prev) => {
+
+              const alreadySaved = prev.some(
+                (collection) =>
+                  collection.collection_id === collectionId
+              );
+
+              if (alreadySaved) {
+                return prev;
+              }
+
+              return [...prev, addedCollection];
+            });
+
+          }
+
+      } catch (err) {
+
+          console.error(err);
+
+      }
+  };
+
+  const handleAddNote = async (newNote) => {
+      // setCollectionData(prev => [...prev, newCollection]);
+
+      console.log("New Note: ", newNote);
+
+      try{
+        const response = await fetch(`http://localhost:4000/recipe/create/note/${recipeID}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+
+          body: JSON.stringify(newNote)
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create note");
+        }
+
+        const createdNote = await response.json();
+
+        setNotesData(prev => [...prev, createdNote]);
+
+        console.log(createdNote);
+
+      } catch (error){
+        console.error("Error creating collection: ", error)
+      }
+    };
+
+    const handleEditNote = async (updatedNote) => {
+
+      try {
+
+        const response = await fetch(
+          `http://localhost:4000/recipe/notes/${editingNote.note_id}`,
+          {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify(updatedNote)
           }
         );
 
-        // update local state
-        setSavedCollections((prev) =>
-          prev.filter(
-            (collection) => collection.collection_id !== collectionId
-          )
-        );
+          const updatedNoteResponse = await response.json();
 
-        } else {
-
-          // SAVE RECIPE
-          await fetch(
-            `http://localhost:4000/collections/${collectionId}/recipe`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-              },
-                body: JSON.stringify({
-                    recipe_id: recipeID
-                })
-            }
+          setNotesData((prev) =>
+            prev.map((note) =>
+              note.note_id === updatedNoteResponse.note_id
+                ? updatedNoteResponse
+                : note
+            )
           );
 
-          // add locally
-          const addedCollection = collectionData.find(
-              (collection) =>
-                  collection.collection_id === collectionId
-          );
+          setEditingNote(null);
+          // setShowTextbox(false);
 
-          setSavedCollections((prev) => {
+        } catch (error) {
 
-            const alreadySaved = prev.some(
-              (collection) =>
-                collection.collection_id === collectionId
-            );
-
-            if (alreadySaved) {
-              return prev;
-            }
-
-            return [...prev, addedCollection];
-          });
+            console.error("Error editing note:", error);
 
         }
+    };
 
-    } catch (err) {
+    const handleDeleteNote = async (noteID) => {
+      const confirmed = window.confirm (
+        "Are you sure you want to delete this Note?"
+      );
 
-        console.error(err);
+      if(!confirmed) return;
 
-    }
-};
+      try{
+        const response = await fetch(`http://localhost:4000/recipe/notes/${noteID}`, {
+          method: "DELETE",
+          credentials: 'include',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        if (response.ok) {
+          setNotesData((prev) =>
+            prev.filter(
+              (note) => note.note_id !== noteID
+            )
+          );
+        } else{
+          alert("failed to delete note.");
+        }
+      }catch (error) {
+        console.error(error);
+      }
+    };
 
   if (isLoading) return <p>Loading...</p>
   if (!recipe) return <p>No Recipe data</p>
@@ -277,6 +400,73 @@ function ViewRecipe() {
       <p><span>Cook Time: </span> {recipe.cook_time} min</p>
       <p><span>Prep Time: </span> {recipe.prep_time} min</p>
       <p><span>Serving Size: </span> {recipe.serving_size}</p>
+
+      <div>
+
+        <ul>
+
+            {notesData && notesData.map((note, index) => {
+              return (
+                <li key={index}>
+                    
+                    <p>- {note.content}</p>
+                    <p>
+                      Created: {new Date(note.created_at).toLocaleDateString()}
+                    </p>
+
+                    {note.updated_at &&
+                    note.updated_at !== note.created_at && (
+                      <p>
+                        Updated: {new Date(note.updated_at).toLocaleDateString()}
+                      </p>
+                    )}
+   
+                  <button onClick={() => {
+                    setEditingNote(note);
+                  }}>
+                    Edit
+                  </button>
+
+                  {editingNote?.note_id === note.note_id && (
+                    <Notes
+                      onClose={() => {
+                        setEditingNote(null);
+                      }}
+                      onSubmit={handleEditNote}
+                      initialData={editingNote}
+                    />
+                  )}
+
+                  <button onClick={() => handleDeleteNote(note.note_id)}>
+                      Delete Note
+                  </button>
+
+                  <br></br>
+
+                </li>
+
+              );
+
+            })}
+
+          </ul>
+
+        <button 
+          onClick={() => {
+          setShowTextbox(true);
+          setEditingNote(null);
+          }}>
+            + Add Note
+        </button>
+
+        {showTextbox && !editingNote && (
+          <Notes
+            onClose={() => setShowTextbox(false)}
+            onSubmit={handleAddNote}
+          />
+)}
+
+      </div>
 
       <h3>Ingredients: </h3>
 

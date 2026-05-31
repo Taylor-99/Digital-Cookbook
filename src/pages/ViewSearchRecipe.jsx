@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import '../index.css'
+import apiLogo from './assets/images/spoonacular_logo.svg'
+import Notes from "../components/Notes"
 
 function ViewSearchRecipe() {
 
@@ -20,6 +22,10 @@ function ViewSearchRecipe() {
     const [collections, setCollections] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [savedCollections, setSavedCollections] = useState([]);
+
+    const [showTextbox, setShowTextbox] = useState(false);
+    const [notesData, setNotesData] = useState([])
+    const [editingNote, setEditingNote] = useState(null);
 
     console.log("Recipe ID: ", recipeID);
 
@@ -126,6 +132,25 @@ function ViewSearchRecipe() {
         }
     };
 
+    const fetchNotes = async () => {
+
+        // console.log(recipeID)
+        try{
+        const response = await fetch(`http://localhost:4000/recipe/notes/recipe/${savedRecipeID}`, {
+            credentials: 'include',
+            headers: {
+            Authorization: `Bearer ${token}`,
+            }
+        });
+
+        const data = await response.json();
+        setNotesData(data);
+
+        } catch (error){
+        console.error('Error: ', error.message);
+        }
+    };
+
     useEffect(() => {
 
         fetchCollections();
@@ -136,6 +161,7 @@ function ViewSearchRecipe() {
 
         if (savedRecipeID) {
             checkIfSavedtoCollection();
+            fetchNotes();
         }
 
     }, [savedRecipeID]);
@@ -292,6 +318,104 @@ function ViewSearchRecipe() {
         }
     };
 
+    const handleAddNote = async (newNote) => {
+      // setCollectionData(prev => [...prev, newCollection]);
+
+      console.log("New Note: ", newNote);
+
+      try{
+        const response = await fetch(`http://localhost:4000/recipe/create/note/${savedRecipeID}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+
+          body: JSON.stringify(newNote)
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create note");
+        }
+
+        const createdNote = await response.json();
+
+        setNotesData(prev => [...prev, createdNote]);
+
+        console.log(createdNote);
+
+      } catch (error){
+        console.error("Error creating collection: ", error)
+      }
+    };
+
+    const handleEditNote = async (updatedNote) => {
+
+      try {
+
+        const response = await fetch(
+          `http://localhost:4000/recipe/notes/${editingNote.note_id}`,
+          {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify(updatedNote)
+          }
+        );
+
+          const updatedNoteResponse = await response.json();
+
+          setNotesData((prev) =>
+            prev.map((note) =>
+              note.note_id === updatedNoteResponse.note_id
+                ? updatedNoteResponse
+                : note
+            )
+          );
+
+          setEditingNote(null);
+          // setShowTextbox(false);
+
+        } catch (error) {
+
+            console.error("Error editing note:", error);
+
+        }
+    };
+
+    const handleDeleteNote = async (noteID) => {
+      const confirmed = window.confirm (
+        "Are you sure you want to delete this Note?"
+      );
+
+      if(!confirmed) return;
+
+      try{
+        const response = await fetch(`http://localhost:4000/recipe/notes/${noteID}`, {
+          method: "DELETE",
+          credentials: 'include',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        if (response.ok) {
+          setNotesData((prev) =>
+            prev.filter(
+              (note) => note.note_id !== noteID
+            )
+          );
+        } else{
+          alert("failed to delete note.");
+        }
+      }catch (error) {
+        console.error(error);
+      }
+    };
+
     // Loading state
     if (isLoading) {
         return <p>Loading...</p>;
@@ -311,7 +435,15 @@ function ViewSearchRecipe() {
             
             <h1>ViewSearchRecipe</h1>
 
-            <h2>{recipeData.title}</h2>
+            <div className="recipe-header">
+                <img
+                src={apiLogo}
+                alt={recipeData.title}
+                className="recipe-thumbnail"
+                />
+
+                <h2>{recipeData.title}</h2>
+            </div>
 
             {isSaved ? (
 
@@ -378,6 +510,73 @@ function ViewSearchRecipe() {
                 }
             </p>
             <p><span>Ready In: </span> {recipeData.readyInMinutes} min</p>
+
+            <div>
+
+                <ul>
+
+                    {notesData && notesData.map((note, index) => {
+                    return (
+                        <li key={index}>
+                            
+                            <p>- {note.content}</p>
+                            <p>
+                            Created: {new Date(note.created_at).toLocaleDateString()}
+                            </p>
+
+                            {note.updated_at &&
+                            note.updated_at !== note.created_at && (
+                            <p>
+                                Updated: {new Date(note.updated_at).toLocaleDateString()}
+                            </p>
+                            )}
+        
+                        <button onClick={() => {
+                            setEditingNote(note);
+                        }}>
+                            Edit
+                        </button>
+
+                        {editingNote?.note_id === note.note_id && (
+                            <Notes
+                            onClose={() => {
+                                setEditingNote(null);
+                            }}
+                            onSubmit={handleEditNote}
+                            initialData={editingNote}
+                            />
+                        )}
+
+                        <button onClick={() => handleDeleteNote(note.note_id)}>
+                            Delete Note
+                        </button>
+
+                        <br></br>
+
+                        </li>
+
+                    );
+
+                    })}
+
+                </ul>
+
+                <button 
+                onClick={() => {
+                setShowTextbox(true);
+                setEditingNote(null);
+                }}>
+                    + Add Note
+                </button>
+
+                {showTextbox && !editingNote && (
+                    <Notes
+                        onClose={() => setShowTextbox(false)}
+                        onSubmit={handleAddNote}
+                    />
+                )}
+
+            </div>
 
             <h3>Ingredients: </h3>
             <ul>

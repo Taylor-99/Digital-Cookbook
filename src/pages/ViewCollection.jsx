@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import '../index.css'
+import apiLogo from './assets/images/spoonacular_logo.svg'
 
 function ViewCollection() {
 
@@ -62,11 +63,24 @@ function ViewCollection() {
                 {collection.recipes && collection.recipes.length > 0 ? (
                     collection.recipes.map((recipe, index) => {
 
+                        const recipeRoute =
+                            recipe.source === "api"
+                            ? `/search/${recipe.spoonacular_id}`
+                            : `/recipe/${recipe.recipe_id}`;
+
                         return(
 
                             <li key={index}>
 
-                                <Link to={`/recipe/${recipe.recipe_id}`}>
+                                <Link to={recipeRoute}>
+
+                                    {recipe.source === "api" && (
+                                        <img
+                                        src={apiLogo}
+                                        alt="API Recipe"
+                                        className="api-icon"
+                                        />
+                                    )}
 
                                     <h2>{recipe.title}</h2>
 

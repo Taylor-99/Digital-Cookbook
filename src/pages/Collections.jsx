@@ -56,11 +56,11 @@ function Collections() {
         });
 
         const savedCollection = await response.json();
-        console.log("FROM BACKEND", savedCollection);
+        // console.log("FROM BACKEND", savedCollection);
 
         setCollectionData((prev) => [...prev, savedCollection]);
 
-        console.log("STATE AFTER: ", collectionData);
+        // console.log("STATE AFTER: ", collectionData);
 
       } catch (error){
         console.error("Error creating collection: ", error)
