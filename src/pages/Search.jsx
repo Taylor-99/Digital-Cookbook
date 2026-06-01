@@ -25,36 +25,36 @@ function Search() {
 
   useEffect(() => {
 
-        const fetchRandomRecipes = async () => {
-    
-            try {
+    const fetchRandomRecipes = async () => {
 
-                  setLoading(true);
+        try {
 
-                const response = await fetch('http://localhost:4000/search/', {
-                    credentials: 'include',
-                    headers: {
-                        Authorization: `Bearer ${token}`, 
-                    }
-                });
-    
-                const data = await response.json()
-                setRecipes(data.recipes);
-                setNoResults(false);
+              setLoading(true);
 
-            } catch (error) {
-                console.error('Error:', error.message);
-            } finally {
+            const response = await fetch('http://localhost:4000/search/', {
+                credentials: 'include',
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                }
+            });
 
-                setLoading(false);
+            const data = await response.json()
+            setRecipes(data.recipes);
+            setNoResults(false);
 
-              }
-        };
-        // console.log("in use")
+        } catch (error) {
+            console.error('Error:', error.message);
+        } finally {
 
-        fetchRandomRecipes();
+            setLoading(false);
 
-    }, [token]);
+          }
+    };
+    // console.log("in use")
+
+    fetchRandomRecipes();
+
+  }, [token]);
 
   const handleSearch = async (e) => {
 

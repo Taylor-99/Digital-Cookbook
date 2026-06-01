@@ -9,7 +9,7 @@ function Recipes() {
   const token = localStorage.getItem("token");
 
   const [recipeData, setRecipeData] = useState([]);
-   const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
 
