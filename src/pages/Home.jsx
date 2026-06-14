@@ -5,6 +5,7 @@ import apiLogo from './assets/images/spoonacular_logo.svg'
 
 function Home() {
 
+  // the global variables used throughout the code
   let navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -15,14 +16,12 @@ function Home() {
 
   const [isLoading, setLoading] = useState(true);
 
-  
-
+  //This function retrieves the users recipe from the backend
   const fetchRecipes = async () => {
-
-    // console.log("in fetch")
     
     try {
 
+        //calls the backend to get the users recipes
         const response = await fetch('http://localhost:4000/recipe/', {
             credentials: 'include',
             headers: {
@@ -30,10 +29,12 @@ function Home() {
             }
         });
 
+        //the recipies that were retrieved from the database
         const data = await response.json();
 
-        console.log(data)
+        // console.log(data)
 
+        //this gets the top 5 recent recipes that the user created not from api
         const recentRecipes = data
           .filter(recipe => recipe.source === "user" || null)
           .sort(
@@ -55,8 +56,10 @@ function Home() {
     }
   };
 
+  //This function retrieves hte collections that the user created
   const fetchCollections = async () => {
 
+    //calls the backend to get the users collections
     try {
       const response = await fetch('http://localhost:4000/collections/', {
         credentials: 'include',
@@ -65,8 +68,10 @@ function Home() {
         }
       });
 
+      //returns the collections that the user created
       const data = await response.json()
 
+      //sorts the collections for recently created collections and gets the top 5
       const recentCollections = data
         .sort(
           (a, b) =>
@@ -81,10 +86,13 @@ function Home() {
     }
   };
 
+  //gets random api recipes
   const fetchRandomRecipes = async () => {
 
+    //calls the backend to retrieve the randome recipes from the api
     try {
 
+      //this calls the backend to retrieve the api recipes
       const response = await fetch('http://localhost:4000/search', {
           credentials: 'include',
           headers: {
@@ -92,15 +100,21 @@ function Home() {
           }
       });
 
+      //the api recipes are sent to the front
       const data = await response.json();
 
-      const randomRecipes = data.recipes.slice(0, 5);
+      // console.log(data)
+
+      //takes the first 5 api recipes
+      const randomRecipes = data.slice(0, 5);
+
+      // console.log("random recipes: ", randomRecipes)
 
       if (!response.ok) {
         throw new Error(data.message);
       };
 
-      console.log(randomRecipes)
+      // console.log(randomRecipes)
       setAPIRecipes(randomRecipes);
 
     } catch (error) {
@@ -109,6 +123,7 @@ function Home() {
   };
 
 
+  //calls functions that fetches the data (user recipes, users collections, api recipes) for the home page
   useEffect(() => {
 
     const fetchHomeData = async () => {
@@ -127,6 +142,7 @@ function Home() {
 
   }, [token]);
 
+  //used to show loading while the data is being retrieved
   if (isLoading) return <p>Loading...</p>
 
   return (
@@ -134,6 +150,7 @@ function Home() {
 
       <h1>Welcome Back</h1>
 
+      {/* redirects to the add recipe page */}
       <Link to="/addrecipe">
 
         Add Recipe
@@ -142,6 +159,7 @@ function Home() {
 
       <h2>Recent Recipes</h2>
 
+      {/* redirects to recipe page to view all users recipes */}
       <Link to="/recipes">
 
         View All Recipes →
@@ -152,6 +170,7 @@ function Home() {
 
       <div>
 
+        {/* Goes through all the recipes that were retrived from the backend and ordered by most recent and are displayed on the frontend*/}
         <ul>
 
           {recipeData && recipeData.map((recipe, index) => {
@@ -159,6 +178,7 @@ function Home() {
             return (
               <li key={index}>
 
+                {/* links to view the recipe */}
                 <Link to={`/recipe/${recipe.recipe_id}`}>
               
                   <h2>{recipe.title}</h2>
@@ -191,6 +211,7 @@ function Home() {
 
       <h2>Recent Collections</h2>
 
+      {/* redirects the user to their created collections page */}
       <Link to="/collections">
 
         View All Collections →
@@ -201,6 +222,7 @@ function Home() {
 
       <div>
 
+        {/* goes through the collections retrieved from the backend and display them on the frontend */}
         {collectionData.length === 0 ? (
             <p> No collections yet</p>
           ) : (
@@ -235,6 +257,7 @@ function Home() {
 
       <h2>Discover Something New</h2>
 
+      {/* redirects the user to the search page */}
       <Link to="/search">
       
         More Recipes →
@@ -245,6 +268,7 @@ function Home() {
 
       <div>
 
+        {/* this shows if there are no recipes to display because of the api :/ */}
         {apiError ? (
           <div>
             <p>
@@ -258,12 +282,15 @@ function Home() {
           </div>
         ) : (
 
+          // this will run if there are recipes to display 
           <ul>
     
+            {/* goes through the results to display them on the frontend */}
             {apiRecipes && apiRecipes.map((recipe) => {
               return (
                 <li key={recipe.id}>
     
+                  {/* redirects to view the api recipe */}
                   <Link to={`/search/${recipe.id}`}>
     
                     <img

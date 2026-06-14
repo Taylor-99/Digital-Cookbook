@@ -29,18 +29,18 @@ function Search() {
 
         try {
 
-              setLoading(true);
+          setLoading(true);
 
-            const response = await fetch('http://localhost:4000/search/', {
-                credentials: 'include',
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                }
-            });
+          const response = await fetch('http://localhost:4000/search/', {
+              credentials: 'include',
+              headers: {
+                  Authorization: `Bearer ${token}`, 
+              }
+          });
 
-            const data = await response.json()
-            setRecipes(data.recipes);
-            setNoResults(false);
+          const data = await response.json()
+          setRecipes(data);
+          setNoResults(false);
 
         } catch (error) {
             console.error('Error:', error.message);

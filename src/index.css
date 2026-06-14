@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Playfair Display', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f3f2e9;
+    outline: 2px solid red;
+}
+
+#navbar {
+
+    background-color: #8a9a5b;
+    color: #4A2C2A;
+
+
+}
+
+#logo {
+
+    font-family: 'Apple Chancery', cursive;
+    background-color: #8a9a5b;
+
+}
