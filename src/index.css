@@ -1,15 +1,38 @@
 @import "tailwindcss";
 
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'Playfair Display', sans-serif;
-    box-sizing: border-box;
+@layer 
+base
+ {
+  *, *::before, *::after {
+    
+box-sizing
+: border-box;
+  }
+
+  * {
+    
+margin
+: 0;
+    
+padding
+: 0;
+    
+box-sizing
+: border-box;
+  }
+
+  html {
+    
+font-family
+: 'Playfair Display', sans-serif;
+
+  }
 }
 
 body {
     background-color: #f3f2e9;
-    outline: 2px solid red;
+    /* outline: 2px solid red; */
+
 }
 
 #navbar {
@@ -17,12 +40,17 @@ body {
     background-color: #8a9a5b;
     color: #4A2C2A;
 
-
 }
 
-#logo {
+#logo-private {
 
     font-family: 'Apple Chancery', cursive;
     background-color: #8a9a5b;
+
+}
+
+#logo-public {
+
+    font-family: 'Apple Chancery', cursive;
 
 }
