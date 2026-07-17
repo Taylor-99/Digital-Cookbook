@@ -27,11 +27,11 @@ function ViewSearchRecipe() {
     const [notesData, setNotesData] = useState([])
     const [editingNote, setEditingNote] = useState(null);
 
-    console.log("Recipe ID: ", recipeID);
+    // console.log("Recipe ID: ", recipeID);
 
     const fetchRecipeDetails = async () => {
 
-        console.log(recipeID)
+        // console.log(recipeID)
         try{
             const response = await fetch(`http://localhost:4000/search/${recipeID}`, {
                 credentials: 'include',
@@ -88,7 +88,7 @@ function ViewSearchRecipe() {
 
     const fetchCollections = async () => {
 
-        console.log("Checking collections for recipe:", savedRecipeID);
+        // console.log("Checking collections for recipe:", savedRecipeID);
 
         try {
             const response = await fetch("http://localhost:4000/collections", {
@@ -251,8 +251,8 @@ function ViewSearchRecipe() {
 
         if (isSaved) {
 
-            console.log(collectionId)
-            console.log(recipeID)
+            // console.log(collectionId)
+            // console.log(recipeID)
 
             // REMOVE RECIPE
             await fetch(
@@ -321,7 +321,7 @@ function ViewSearchRecipe() {
     const handleAddNote = async (newNote) => {
       // setCollectionData(prev => [...prev, newCollection]);
 
-      console.log("New Note: ", newNote);
+    //   console.log("New Note: ", newNote);
 
       try{
         const response = await fetch(`http://localhost:4000/recipe/create/note/${savedRecipeID}`, {
@@ -342,7 +342,7 @@ function ViewSearchRecipe() {
 
         setNotesData(prev => [...prev, createdNote]);
 
-        console.log(createdNote);
+        // console.log(createdNote);
 
       } catch (error){
         console.error("Error creating collection: ", error)
@@ -426,8 +426,8 @@ function ViewSearchRecipe() {
         return <p>No recipe found.</p>;
     };
 
-    console.log("Recipe Data: ", recipeData);
-    console.log("Similar Recipes: ", similarRecipes);
+    // console.log("Recipe Data: ", recipeData);
+    // console.log("Similar Recipes: ", similarRecipes);
 
     return (
 

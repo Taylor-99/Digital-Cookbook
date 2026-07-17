@@ -7,8 +7,12 @@ function Home() {
 
   // the global variables used throughout the code
   let navigate = useNavigate();
+  //verify the user in the backend
+
   const token = localStorage.getItem("token");
 
+
+  //contains the data to show on the home page
   const [recipeData, setRecipeData] = useState([]);
   const [collectionData, setCollectionData] = useState([]);
   const [apiRecipes, setAPIRecipes] = useState([]);
@@ -148,23 +152,43 @@ function Home() {
   return (
     <div>
 
-      <h1>Welcome Back</h1>
+      <br></br>
+      <br></br>
 
-      {/* redirects to the add recipe page */}
-      <Link to="/addrecipe">
+      <h1 className="text-[#4A2C2A] text-4xl flex flex-col items-center">Welcome</h1>
 
-        Add Recipe
+      <br></br>
+      <br></br>
 
-      </Link>
+      <div className="grid grid-cols-1 gap-4 px-6 py-6">
 
-      <h2>Recent Recipes</h2>
+        {/* redirects to the add recipe page */}
+        <h2 className="text-[#4A2C2A] text-2xl font-bold text-center mb-4">Recent Recipes</h2>
 
-      {/* redirects to recipe page to view all users recipes */}
-      <Link to="/recipes">
+        <div className="flex justify-between items-center">
 
-        View All Recipes →
+          <Link 
+            to="/addrecipe" 
+            className="px-4 py-2 rounded-lg bg-[#6E8B5B] text-white hover:bg-[#5E774D]">
 
-      </Link>
+            + Add Recipe
+
+          </Link>
+
+          {/* redirects to recipe page to view all users recipes */}
+          <Link 
+            to="/recipes"
+            className="font-medium hover:text-[#D8A75B]"
+          >
+
+            View All Recipes →
+
+          </Link>
+
+        </div>
+
+      </div>
+
 
       <br></br>
 

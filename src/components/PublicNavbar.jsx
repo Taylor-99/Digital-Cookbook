@@ -11,8 +11,8 @@ const PublicNavbar = () => {
         <h1
           className="pl-6 text-[#4A2C2A] font-bold sm:text-2xl md:text-3xl lg:text-4xl flex flex-col"
         >
-          <span id="logo-public" > Digital </span>
-          <span id="logo-public" > Cookbook </span>
+          <span id="logo" > Digital </span>
+          <span id="logo" > Cookbook </span>
         </h1>
 
       </div>

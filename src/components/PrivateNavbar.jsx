@@ -12,18 +12,25 @@ const PrivateNavbar = () => {
   // for pop up box
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const navItem =
+    "px-6 py-3 rounded-t-xl transition-all duration-200";
+
   return (
-    <nav className="flex flex-col md:flex-row md:gap-10 lg:gap-25 xl:gap-45" id="navbar" >
+    <nav 
+      className="
+        flex flex-col px-6 py-4
+        md:grid md:h-28 md:grid-cols-[180px_1fr_180px]" 
+      id="navbar"
+    >
 
       {/* contains the logo for the nav bar and depending on the screen size, will show the hamburger menu to open and close the menu */}
-
-      <div className="flex items-center justify-between gap-62" >
+      <div className="flex items-center self-center justify-between w-full md:w-auto md:justify-start" >
 
         <h1
-          className="flex flex-col text-center font-bold sm:text-2xl md:text-3xl lg:text-4xl"
+          className="font-bold text-xl text-center"
         >
-          <span id="logo-private" > Digital </span>
-          <span id="logo-private" > Cookbook </span>
+          <span id="logo" className="block"> Digital </span>
+          <span id="logo" className="block"> Cookbook </span>
         </h1>
 
         <button
@@ -35,78 +42,9 @@ const PrivateNavbar = () => {
 
       </div>
 
-      {/* The list that will show if the screen is normal size (medium size and up) */}
-      <ul className="hidden md:flex gap-6 text-xs sm:text-sm md:text-xl lg:text-2xl">
-
-        <li>
-          <a href="/"> Home </a>
-        </li>
-
-        <li>
-          <a href="/recipes"> Recipes </a>
-        </li>
-
-        <li>
-          <a href="/collections"> Collections </a>
-        </li>
-
-        <li >
-          <a href="/search" > Search </a>
-        </li>
-
-        <li>
-          <a href="/addrecipe" >Add Recipe</a>
-        </li>
-
-        <li className="">
-          <button onClick={() => setShowLogoutModal(true)}>
-            Logout
-          </button>
-        </li>
-
-        {/* a pop up box to confirm if a user wants to log out or return back to current screen */}
-        {showLogoutModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-
-            <div className="bg-white p-10 rounded-lg shadow-lg">
-
-              <h2 className="text-xl font-bold mb-4">
-                Ready to log off?
-              </h2>
-
-              <div className="flex gap-4 justify-center">
-
-                <button
-                  className="bg-gray-300 hover:bg-gray-500 rounded"
-                  onClick={() => setShowLogoutModal(false)}
-                >
-                  Cancel
-                </button>
-
-                {/* if the user chooses to log out, will remove user information from sorege and direct them back to the landing page */}
-                <button
-                  className="bg-red-500 hover:bg-red-700 text-white rounded"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    navigate("/login");
-                  }}
-                >
-                  Logout
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-        )}
-        
-      </ul>
-
       {/* If the screen is small then this will convert it to a drop down menu */}
       {open && (
-        <ul className="flex flex-col items-center gap-4 py-4 bg-[#8a9a5b] md:hidden">
+        <ul className="flex flex-col items-center gap-4 py-4 mt-4 bg-[#8a9a5b] w-full md:hidden">
           <li
             className={`w-full text-center rounded-lg ${
               location.pathname === "/"
@@ -168,14 +106,14 @@ const PrivateNavbar = () => {
 
               <div className="bg-white p-10 rounded-lg shadow-lg">
 
-                <h2 className="text-xl font-bold mb-4">
+                <h2 className="text-xl font-bold mb-4 pl-1">
                   Ready to log off?
                 </h2>
 
-                <div className="flex gap-4 justify-center">
+                <div className="flex gap-4 items-center">
 
                   <button
-                    className="bg-gray-300 rounded"
+                    className="px-4 py-2 bg-gray-300 rounded"
                     onClick={() => setShowLogoutModal(false)}
                   >
                     Cancel
@@ -200,6 +138,103 @@ const PrivateNavbar = () => {
           )}
         </ul>
       )}
+
+      {/* The list that will show if the screen is normal size (medium size and up) */}
+      <ul className="hidden md:flex justify-center self-end gap-10">
+
+        <li className={`${navItem} ${
+              location.pathname === "/"
+                ? "bg-[#F4E6C3] font-bold shadow-sm"
+                : "bg-[#D8A75B] hover:bg-[#C99243]"
+            }`}>
+          <a href="/"> Home </a>
+        </li>
+
+        <li className={`${navItem} ${
+              location.pathname === "/recipes"
+                ? "bg-[#F4E6C3] font-bold shadow-sm"
+                : "bg-[#D8A75B] hover:bg-[#C99243]"
+            }`}>
+          <a href="/recipes"> Recipes </a>
+        </li>
+
+        <li className={`${navItem} ${
+              location.pathname === "/collections"
+                ? "bg-[#F4E6C3] font-bold shadow-sm"
+                : "bg-[#D8A75B] hover:bg-[#C99243]"
+            }`}>
+          <a href="/collections"> Collections </a>
+        </li>
+
+        <li className={`${navItem} ${
+              location.pathname === "/search"
+                ? "bg-[#F4E6C3] font-bold shadow-sm"
+                : "bg-[#D8A75B] hover:bg-[#C99243]"
+            }`}>
+          <a href="/search" > Search </a>
+        </li>
+        
+      </ul>
+
+      <div className="hidden md:flex flex-col items-end self-center gap-2 pb-2">
+
+        <button 
+          onClick={() => setShowLogoutModal(true)}
+          className="bg-[#D8A75B] rounded-xl px-4 py-2 text-center transition-colors min-w-32.5  hover:bg-[#8C3E35] hover:font-semibold hover:text-md"
+          >
+          Logout
+        </button>
+        
+        <a 
+          href="/addrecipe" 
+          className={`bg-[#D8A75B] rounded-xl px-4 py-2 text-center transition-colors min-w-32.5 whitespace-nowrap ${
+            location.pathname === "/addrecipe"
+              ? "font-bold"
+              : "hover:bg-[#C99243] hover:font-bold hover:text-md"
+          }`}
+          >
+          <span>+ Add Recipe</span>
+        </a>
+
+      </div>
+
+        {/* a pop up box to confirm if a user wants to log out or return back to current screen */}
+        {showLogoutModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+
+            <div className="bg-white p-10 rounded-lg shadow-lg">
+
+              <h2 className="text-xl font-bold mb-4 pl-4">
+                Ready to log off?
+              </h2>
+
+              <div className="flex gap-4 items-center">
+
+                <button
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-500 rounded"
+                  onClick={() => setShowLogoutModal(false)}
+                >
+                  Cancel
+                </button>
+
+                {/* if the user chooses to log out, will remove user information from sorege and direct them back to the landing page */}
+                <button
+                  className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    navigate("/login");
+                  }}
+                >
+                  Logout
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
 
     </nav>
   )
