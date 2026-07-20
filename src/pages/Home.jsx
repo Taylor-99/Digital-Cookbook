@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import '../index.css'
 import apiLogo from './assets/images/spoonacular_logo.svg'
@@ -19,6 +19,8 @@ function Home() {
   const [apiError, setApiError] = useState(null);
 
   const [isLoading, setLoading] = useState(true);
+
+  const scrollRef = useRef(null);
 
   //This function retrieves the users recipe from the backend
   const fetchRecipes = async () => {
@@ -178,7 +180,7 @@ function Home() {
           {/* redirects to recipe page to view all users recipes */}
           <Link 
             to="/recipes"
-            className="font-medium hover:text-[#D8A75B]"
+            className="text-[#4A2C2A] font-medium hover:text-[#D8A75B]"
           >
 
             View All Recipes →
@@ -192,55 +194,116 @@ function Home() {
 
       <br></br>
 
-      <div>
+      <div className="flex items-center gap-2">
+
+        {/* Left Arrow */}
+        <button
+          onClick={() =>
+            scrollRef.current?.scrollBy({
+              left: -300,
+              behavior: "smooth",
+            })
+          }
+          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+        >
+          ◀
+        </button>
 
         {/* Goes through all the recipes that were retrived from the backend and ordered by most recent and are displayed on the frontend*/}
-        <ul>
+        <ul 
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto pb-2" 
+        >
 
           {recipeData && recipeData.map((recipe, index) => {
 
             return (
-              <li key={index}>
 
-                {/* links to view the recipe */}
-                <Link to={`/recipe/${recipe.recipe_id}`}>
               
-                  <h2>{recipe.title}</h2>
-  
-                  <img src={recipe.image} alt={recipe.title}></img>
-  
-                  <p><span>Description: </span>{recipe.description}</p>
-  
-                  <p><span>Cook Time: </span>{recipe.cook_time} min</p>
-  
-                  <p><span>Prep Time: </span>{recipe.prep_time} min</p>
-  
-                  <p><span>Serving Size: </span>{recipe.serving_size}</p>
+              <li key={index} className="flex-none w-64">
 
-                </Link>
+                  <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
 
-                <br></br>
+                    {/* links to view the recipe */}
+                    <Link to={`/recipe/${recipe.recipe_id}`}>
+                  
+                      <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2 min-h-14">{recipe.title}</h2>
+      
+                      <img 
+                        src={recipe.image} 
+                        alt={recipe.title} 
+                        className="w-full h-40 object-cover rounded-md mb-2"
+                      ></img>
+      
+                      <p className="text-[#4A2C2A]"><span className="font-semibold">⏱ Prep: </span>{recipe.prep_time} min</p>
 
-              </li>
+                      <p className="text-[#4A2C2A]" ><span className="font-semibold">🍳 Cook: </span>{recipe.cook_time} min</p>
+      
+                      <p className="text-[#4A2C2A]" ><span className="font-semibold" >🍽 Serves: </span>{recipe.serving_size}</p>
+
+                    </Link>
+
+                    <details className="mt-3">
+
+                      <summary className="cursor-pointer font-medium text-[#6E8B5B]">
+                          Description
+                      </summary>
+
+                      <p className="mt-2 text-sm text-gray-700">
+                          {recipe.description}
+                      </p>
+
+                    </details>
+
+                  </div>
+                </li>
+
 
             );
 
           })}
 
         </ul>
+
+        {/* Right Arrow */}
+        <button
+          onClick={() =>
+            scrollRef.current?.scrollBy({
+              left: 300,
+              behavior: "smooth",
+            })
+          }
+          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+        >
+          ▶
+        </button>
       
       </div>
 
       <br></br>
 
-      <h2>Recent Collections</h2>
+      <div className="grid grid-cols-1 gap-4 px-6 py-6" >
 
-      {/* redirects the user to their created collections page */}
-      <Link to="/collections">
+        <h2 className="text-[#4A2C2A] text-2xl font-bold text-center" >
+          Recent Collections
+        </h2>
 
-        View All Collections →
 
-      </Link>
+        <div className="flex items-center">
+
+          {/* redirects the user to their created collections page */}
+          <Link 
+            to="/collections"
+            className="text-[#4A2C2A] ml-auto font-medium hover:text-[#D8A75B]"
+          >
+
+            View All Collections →
+
+          </Link>
+
+        </div>
+
+      </div>
 
       <br></br>
 
@@ -279,14 +342,28 @@ function Home() {
 
       <br></br>
 
-      <h2>Discover Something New</h2>
+      <div className="grid grid-cols-1 gap-4 px-6 py-6">
 
-      {/* redirects the user to the search page */}
-      <Link to="/search">
-      
-        More Recipes →
-      
-      </Link>
+        <h2 className="text-[#4A2C2A] text-2xl font-bold text-center">
+          Discover Something New
+        </h2>
+
+        <div className="flex items-center">
+
+          {/* redirects the user to the search page */}
+          <Link 
+            to="/search"
+            className="text-[#4A2C2A] ml-auto font-medium hover:text-[#D8A75B]"
+          >
+          
+            More Recipes →
+          
+          </Link>
+
+        </div>
+
+      </div>
+
 
       <br></br>
 
@@ -307,76 +384,131 @@ function Home() {
         ) : (
 
           // this will run if there are recipes to display 
-          <ul>
-    
-            {/* goes through the results to display them on the frontend */}
-            {apiRecipes && apiRecipes.map((recipe) => {
-              return (
-                <li key={recipe.id}>
-    
-                  {/* redirects to view the api recipe */}
-                  <Link to={`/search/${recipe.id}`}>
-    
-                    <img
-                      src={apiLogo}
-                      alt="API Recipe"
-                      className="api-icon"
-                    />
-                  
-                    <h2>{recipe.title}</h2>
-    
-                    <img src={recipe.image} alt={recipe.title}></img>
-    
-                    <p>
-                      <span>Description: </span>
-    
-                      {recipe.summary
-                        ?.replace(/<[^>]*>/g, "")
-                        .slice(0, 150)}
-                      ...
-                    </p>
-    
-                    <p>
-                      <span>Ready In: </span>
-    
-                      {recipe.readyInMinutes || "N/A"} min
-                    </p>
-    
-                    <p>
-                      <span> Cuisine: </span>
-    
-                      {recipe.cuisines?.length
-                        ? recipe.cuisines.join(", ")
-                        : "N/A"
-                      }
-                    </p>
-    
-                    <p>
-                      <span> Diet: </span>
-    
-                      {recipe.diets?.length
-                      ? recipe.diets.join(", ")
-                      : "N/A"
-                      }
-                    </p>
-    
-                    <p>
-                      <span>Serving Size: </span>
-    
-                      {recipe.servings}
-                    </p>
-    
-                  </Link>
-    
-                  <br></br>
-    
-                </li>
-    
-              );
-    
-            })}
-    
-          </ul>
+          <div className="flex items-center gap-2">
+
+            {/* Left Arrow */}
+            <button
+              onClick={() =>
+                scrollRef.current?.scrollBy({
+                  left: -300,
+                  behavior: "smooth",
+                })
+              }
+              className="hidden md:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+            >
+              ◀
+            </button>
+
+            <ul 
+              ref={scrollRef}
+              className="flex gap-6 overflow-x-auto scroll-smooth pb-2"
+            >
+      
+              {/* goes through the results to display them on the frontend */}
+              {apiRecipes && apiRecipes.map((recipe) => {
+                return (
+                  <li key={recipe.id} className="flex-none w-64">
+
+                    <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+
+                      {/* redirects to view the api recipe */}
+                      <Link to={`/search/${recipe.id}`}>
+                      
+                        <div className="flex items-center gap-2 mb-2">
+
+                          <img
+                            src={apiLogo}
+                            alt=""
+                            className="w-6 h-6"
+                          />
+
+                          <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">
+                              {recipe.title}
+                          </h2>
+
+                        </div>
+        
+                        <img 
+                          src={recipe.image} 
+                          alt={recipe.title}
+                          className="w-full h-40 object-cover rounded-md mb-2"
+                        ></img>
+        
+        
+                        <p className="text-[#4A2C2A]">
+                          <span className="font-semibold">Ready In: </span>
+        
+                          {recipe.readyInMinutes || "N/A"} min
+                        </p>
+        
+                        <p className="text-[#4A2C2A]">
+                          <span className="font-semibold"> Cuisine: </span>
+        
+                          {recipe.cuisines?.length
+                            ? recipe.cuisines.join(", ")
+                            : "N/A"
+                          }
+                        </p>
+        
+                        <p className="text-[#4A2C2A]">
+                          <span className="font-semibold"> Diet: </span>
+        
+                          {recipe.diets?.length
+                          ? recipe.diets.join(", ")
+                          : "N/A"
+                          }
+                        </p>
+        
+                        <p className="text-[#4A2C2A]">
+                          <span className="font-semibold">Serving Size: </span>
+        
+                          {recipe.servings}
+                        </p>
+
+                      </Link>
+
+                      <details className="mt-3">
+
+                        <summary className="cursor-pointer font-medium text-[#6E8B5B]">
+                            Description
+                        </summary>
+                        
+                        <p className="mt-2 text-sm text-gray-700">
+                            {recipe.summary
+                            ?.replace(/<[^>]*>/g, "")
+                            .slice(0, 150)}
+                          ...
+                        </p>
+
+                      </details>
+        
+                      <br></br>
+
+                    </div>
+      
+                  </li>
+      
+                );
+      
+              })}
+      
+            </ul>
+
+            {/* Right Arrow */}
+            <button
+              onClick={() =>
+                scrollRef.current?.scrollBy({
+                  left: 300,
+                  behavior: "smooth",
+                })
+              }
+              className="hidden md:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+            >
+              ▶
+            </button>
+
+          </div>
+
 
         )}
         
