@@ -20,7 +20,9 @@ function Home() {
 
   const [isLoading, setLoading] = useState(true);
 
-  const scrollRef = useRef(null);
+  const recipeScrollRef = useRef(null);
+  const collectionScrollRef = useRef(null);
+  const discoverScrollRef = useRef(null);
 
   //This function retrieves the users recipe from the backend
   const fetchRecipes = async () => {
@@ -76,6 +78,8 @@ function Home() {
 
       //returns the collections that the user created
       const data = await response.json()
+
+      // console.log(data)
 
       //sorts the collections for recently created collections and gets the top 5
       const recentCollections = data
@@ -194,89 +198,104 @@ function Home() {
 
       <br></br>
 
-      <div className="flex items-center gap-2">
-
-        {/* Left Arrow */}
-        <button
-          onClick={() =>
-            scrollRef.current?.scrollBy({
-              left: -300,
-              behavior: "smooth",
-            })
-          }
-          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
-        >
-          ◀
-        </button>
+      <div>
 
         {/* Goes through all the recipes that were retrived from the backend and ordered by most recent and are displayed on the frontend*/}
-        <ul 
-          ref={scrollRef}
-          className="flex gap-6 overflow-x-auto pb-2" 
-        >
 
-          {recipeData && recipeData.map((recipe, index) => {
+        {recipeData.length === 0 ? (
+          <p> No Recipes yet</p>
+        ) : (
 
-            return (
+          <div className="overflow-hidden">
 
-              
-              <li key={index} className="flex-none w-64">
+            <div className="flex items-center gap-2">
 
-                  <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+              {/* Left Arrow */}
+              <button
+                onClick={() =>
+                  recipeScrollRef.current?.scrollBy({
+                    left: -300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ◀
+              </button>
 
-                    {/* links to view the recipe */}
-                    <Link to={`/recipe/${recipe.recipe_id}`}>
-                  
-                      <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2 min-h-14">{recipe.title}</h2>
-      
-                      <img 
-                        src={recipe.image} 
-                        alt={recipe.title} 
-                        className="w-full h-40 object-cover rounded-md mb-2"
-                      ></img>
-      
-                      <p className="text-[#4A2C2A]"><span className="font-semibold">⏱ Prep: </span>{recipe.prep_time} min</p>
+              <ul 
+                ref={recipeScrollRef}
+                className="flex min-w-0 flex-1 gap-6 overflow-x-auto overflow-y-hidden scroll-smooth pb-2" 
+              >
 
-                      <p className="text-[#4A2C2A]" ><span className="font-semibold">🍳 Cook: </span>{recipe.cook_time} min</p>
-      
-                      <p className="text-[#4A2C2A]" ><span className="font-semibold" >🍽 Serves: </span>{recipe.serving_size}</p>
+                {recipeData && recipeData.map((recipe, index) => {
 
-                    </Link>
+                  return (
+                    
+                    <li key={index} className="flex-none w-64">
 
-                    <details className="mt-3">
+                        <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
 
-                      <summary className="cursor-pointer font-medium text-[#6E8B5B]">
-                          Description
-                      </summary>
+                          {/* links to view the recipe */}
+                          <Link to={`/recipe/${recipe.recipe_id}`}>
+                        
+                            <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2 min-h-14">{recipe.title}</h2>
+            
+                            <img 
+                              src={recipe.image} 
+                              alt={recipe.title} 
+                              className="w-full h-40 object-cover rounded-md mb-2"
+                            ></img>
+            
+                            <p className="text-[#4A2C2A]"><span className="font-semibold">⏱ Prep: </span>{recipe.prep_time} min</p>
 
-                      <p className="mt-2 text-sm text-gray-700">
-                          {recipe.description}
-                      </p>
+                            <p className="text-[#4A2C2A]" ><span className="font-semibold">🍳 Cook: </span>{recipe.cook_time} min</p>
+            
+                            <p className="text-[#4A2C2A]" ><span className="font-semibold" >🍽 Serves: </span>{recipe.serving_size}</p>
 
-                    </details>
+                          </Link>
 
-                  </div>
-                </li>
+                          <details className="mt-3">
+
+                            <summary className="cursor-pointer font-medium text-[#6E8B5B]">
+                                Description
+                            </summary>
+
+                            <p className="mt-2 text-sm text-gray-700">
+                              {recipe.description
+                              ?.replace(/<[^>]*>/g, "")
+                              .slice(0, 150)}
+                            </p>
+
+                          </details>
 
 
-            );
+                        </div>
 
-          })}
+                      </li>
 
-        </ul>
+                  );
 
-        {/* Right Arrow */}
-        <button
-          onClick={() =>
-            scrollRef.current?.scrollBy({
-              left: 300,
-              behavior: "smooth",
-            })
-          }
-          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
-        >
-          ▶
-        </button>
+                })}
+
+              </ul>
+
+            </div>
+            {/* Right Arrow */}
+            <button
+              onClick={() =>
+                recipeScrollRef.current?.scrollBy({
+                  left: 300,
+                  behavior: "smooth",
+                })
+              }
+              className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+            >
+              ▶
+            </button>
+          </div>
+
+        )}
       
       </div>
 
@@ -312,20 +331,85 @@ function Home() {
         {/* goes through the collections retrieved from the backend and display them on the frontend */}
         {collectionData.length === 0 ? (
             <p> No collections yet</p>
-          ) : (
-            <div>
+        ) : (
 
-              <ul>
+          <div className="overflow-hidden">
+
+            <div className="flex items-center gap-2">
+
+              <button
+                onClick={() =>
+                  collectionScrollRef.current?.scrollBy({
+                    left: -300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ◀
+              </button>
+
+              <ul ref={collectionScrollRef}
+              className="flex min-w-0 flex-1 gap-6 overflow-x-auto overflow-y-hidden scroll-smooth pb-2">
 
                 {collectionData && collectionData.map((collection, index) => {
                   return (
-                    <li key={index}>
+                    <li key={index} className="flex-none w-64">
 
-                      <Link to={`/collection/${collection.collection_id}`}>
-                        <h2>{collection.collection_name}</h2>
-                    
-                        <p>Description: {collection.description}</p>
-                      </Link>
+                      <div className="relative bg-[url('src/pages/assets/images/greenCover.png')] bg-cover bg-center h-auto min-h-64 p-4 shadow-md rounded-l-md w-full transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+
+                        <div className="absolute inset-0 pointer-events-none bg-linear-to-br from-white/20 via-transparent to-black/20">
+                        </div>
+
+                        <div className="absolute left-0 top-0 h-full w-5 bg-[#6b3f2a] border-r border-[#4A2C2A] shadow-inner"></div>
+
+                        <div className="relative z-10 pl-8 pr-4 pt-4">
+
+                          <Link to={`/collection/${collection.collection_id}`}>
+
+                            <div className=" text-center text-[#4A2C2A] line-clamp-2 min-h-14 mx-6 mt-6 rounded bg-[#F8F3E8]/90 py-2 shadow">
+
+                              <h2 className="text-xl font-bold">{collection.collection_name}</h2>
+
+                              <p>🍽 {collection.recipe_count} Recipes</p>
+                            </div>
+
+                        
+                          </Link>
+
+                          <div className="mt-5 border-b border-[#D8A75B]"/>
+
+                          <div className="border-b border-[#D8A75B]"></div>
+
+                          <details className="group mt-3">
+
+                            <summary className="list-none cursor-pointer rounded-md bg-[#F8F3E8] px-4 py-2 text-center font-semibold text-[#4A2C2A] shadow-md transition hover:bg-[#EFE6D2]">
+                                📖 About this Cookbook
+                            </summary>
+
+                            <div className="mt-3 rounded-md bg-[#F8F3E8] p-3 shadow-inner">
+
+                              <p className="text-sm text-[#4A2C2A] leading-relaxed">
+                                  {collection.description
+                                  ?.replace(/<[^>]*>/g, "")
+                                  .slice(0, 150)}
+                              </p>
+
+                            </div>
+
+                            <div className="overflow-hidden transition-all duration-300 group-open:mt-4"></div>
+
+                          </details>
+                          
+                        </div>
+
+                        <div className="absolute right-1 top-1 bottom-1 w-2 bg-[#F8F3E8] rounded-r-sm shadow-inner pointer-events-none">
+                          <div className="w-0.5 bg-[#FDFBF6]"></div>
+                          <div className="w-0.5 bg-[#F3EBDD]"></div>
+                          <div className="w-0.5 bg-[#E8DCC5]"></div>
+                        </div>
+
+                      </div>
 
                     </li>
 
@@ -335,8 +419,22 @@ function Home() {
 
               </ul>
           
+              {/* Right Arrow */}
+              <button
+                onClick={() =>
+                  collectionScrollRef.current?.scrollBy({
+                    left: 300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ▶
+              </button>
             </div>
-          )}
+          </div>
+          
+        )}
         
       </div>
 
@@ -364,7 +462,6 @@ function Home() {
 
       </div>
 
-
       <br></br>
 
       <div>
@@ -383,132 +480,135 @@ function Home() {
           </div>
         ) : (
 
-          // this will run if there are recipes to display 
-          <div className="flex items-center gap-2">
+          <div>
 
-            {/* Left Arrow */}
-            <button
-              onClick={() =>
-                scrollRef.current?.scrollBy({
-                  left: -300,
-                  behavior: "smooth",
-                })
-              }
-              className="hidden md:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
-            >
-              ◀
-            </button>
+            {/* this will run if there are recipes to display  */}
+            <div className="flex items-center gap-2">
 
-            <ul 
-              ref={scrollRef}
-              className="flex gap-6 overflow-x-auto scroll-smooth pb-2"
-            >
-      
-              {/* goes through the results to display them on the frontend */}
-              {apiRecipes && apiRecipes.map((recipe) => {
-                return (
-                  <li key={recipe.id} className="flex-none w-64">
+              {/* Left Arrow */}
+              <button
+                onClick={() =>
+                  discoverScrollRef.current?.scrollBy({
+                    left: -300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ◀
+              </button>
 
-                    <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+              <ul 
+                ref={discoverScrollRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth pb-2"
+              >
+        
+                {/* goes through the results to display them on the frontend */}
+                {apiRecipes && apiRecipes.map((recipe) => {
+                  return (
+                    <li key={recipe.id} className="flex-none w-64">
 
-                      {/* redirects to view the api recipe */}
-                      <Link to={`/search/${recipe.id}`}>
-                      
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-white p-4 rounded-lg shadow-md w-full overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
 
-                          <img
-                            src={apiLogo}
-                            alt=""
-                            className="w-6 h-6"
-                          />
-
-                          <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">
-                              {recipe.title}
-                          </h2>
-
-                        </div>
-        
-                        <img 
-                          src={recipe.image} 
-                          alt={recipe.title}
-                          className="w-full h-40 object-cover rounded-md mb-2"
-                        ></img>
-        
-        
-                        <p className="text-[#4A2C2A]">
-                          <span className="font-semibold">Ready In: </span>
-        
-                          {recipe.readyInMinutes || "N/A"} min
-                        </p>
-        
-                        <p className="text-[#4A2C2A]">
-                          <span className="font-semibold"> Cuisine: </span>
-        
-                          {recipe.cuisines?.length
-                            ? recipe.cuisines.join(", ")
-                            : "N/A"
-                          }
-                        </p>
-        
-                        <p className="text-[#4A2C2A]">
-                          <span className="font-semibold"> Diet: </span>
-        
-                          {recipe.diets?.length
-                          ? recipe.diets.join(", ")
-                          : "N/A"
-                          }
-                        </p>
-        
-                        <p className="text-[#4A2C2A]">
-                          <span className="font-semibold">Serving Size: </span>
-        
-                          {recipe.servings}
-                        </p>
-
-                      </Link>
-
-                      <details className="mt-3">
-
-                        <summary className="cursor-pointer font-medium text-[#6E8B5B]">
-                            Description
-                        </summary>
+                        {/* redirects to view the api recipe */}
+                        <Link to={`/search/${recipe.id}`}>
                         
-                        <p className="mt-2 text-sm text-gray-700">
-                            {recipe.summary
-                            ?.replace(/<[^>]*>/g, "")
-                            .slice(0, 150)}
-                          ...
-                        </p>
+                          <div className="flex items-center gap-2 mb-2">
 
-                      </details>
+                            <img
+                              src={apiLogo}
+                              alt=""
+                              className="w-6 h-6"
+                            />
+
+                            <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">
+                                {recipe.title}
+                            </h2>
+
+                          </div>
+          
+                          <img 
+                            src={recipe.image} 
+                            alt={recipe.title}
+                            className="w-full h-40 object-cover rounded-md mb-2"
+                          ></img>
+          
+          
+                          <p className="text-[#4A2C2A]">
+                            <span className="font-semibold">Ready In: </span>
+          
+                            {recipe.readyInMinutes || "N/A"} min
+                          </p>
+          
+                          <p className="text-[#4A2C2A]">
+                            <span className="font-semibold"> Cuisine: </span>
+          
+                            {recipe.cuisines?.length
+                              ? recipe.cuisines.join(", ")
+                              : "N/A"
+                            }
+                          </p>
+          
+                          <p className="text-[#4A2C2A]">
+                            <span className="font-semibold"> Diet: </span>
+          
+                            {recipe.diets?.length
+                            ? recipe.diets.join(", ")
+                            : "N/A"
+                            }
+                          </p>
+          
+                          <p className="text-[#4A2C2A]">
+                            <span className="font-semibold">Serving Size: </span>
+          
+                            {recipe.servings}
+                          </p>
+
+                        </Link>
+
+                        <details className="mt-3">
+
+                          <summary className="cursor-pointer font-medium text-[#6E8B5B]">
+                              Description
+                          </summary>
+                          
+                          <p className="mt-2 text-sm text-gray-700">
+                              {recipe.summary
+                              ?.replace(/<[^>]*>/g, "")
+                              .slice(0, 150)}
+                            ...
+                          </p>
+
+                        </details>
+          
+                        <br></br>
+
+                      </div>
         
-                      <br></br>
+                    </li>
+        
+                  );
+        
+                })}
+        
+              </ul>
 
-                    </div>
-      
-                  </li>
-      
-                );
-      
-              })}
-      
-            </ul>
+              {/* Right Arrow */}
+              <button
+                onClick={() =>
+                  discoverScrollRef.current?.scrollBy({
+                    left: 300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ▶
+              </button>
 
-            {/* Right Arrow */}
-            <button
-              onClick={() =>
-                scrollRef.current?.scrollBy({
-                  left: 300,
-                  behavior: "smooth",
-                })
-              }
-              className="hidden md:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
-            >
-              ▶
-            </button>
-
+            </div>
+            
           </div>
-
 
         )}
         

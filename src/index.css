@@ -19,6 +19,8 @@ padding
     
 box-sizing
 : border-box;
+
+/* outline: 1px solid red; */
   }
 
   html {
@@ -31,7 +33,7 @@ font-family
 
 body {
     background-color: #f3f2e9;
-    /* outline: 2px solid red; */
+    /* outline: 8px solid red; */
 
 }
 
