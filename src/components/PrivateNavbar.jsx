@@ -19,7 +19,7 @@ const PrivateNavbar = () => {
     <nav 
       className="
         flex flex-col px-6 py-4
-        md:grid md:h-28 md:grid-cols-[180px_1fr_180px]" 
+        md:grid md:h-28 md:grid-cols-[auto_1fr_auto]" 
       id="navbar"
     >
 
@@ -140,14 +140,14 @@ const PrivateNavbar = () => {
       )}
 
       {/* The list that will show if the screen is normal size (medium size and up) */}
-      <ul className="hidden md:flex justify-center self-end gap-10">
+      <ul className="hidden md:flex justify-center self-end gap-4 lg:gap-8 xl:gap-10">
 
         <li className={`${navItem} ${
               location.pathname === "/"
                 ? "bg-[#F4E6C3] font-bold shadow-sm"
                 : "bg-[#D8A75B] hover:bg-[#C99243]"
             }`}>
-          <a href="/"> Home </a>
+          <Link to="/"> Home </Link>
         </li>
 
         <li className={`${navItem} ${
@@ -155,7 +155,7 @@ const PrivateNavbar = () => {
                 ? "bg-[#F4E6C3] font-bold shadow-sm"
                 : "bg-[#D8A75B] hover:bg-[#C99243]"
             }`}>
-          <a href="/recipes"> Recipes </a>
+          <Link to="/recipes"> Recipes </Link>
         </li>
 
         <li className={`${navItem} ${
@@ -163,7 +163,7 @@ const PrivateNavbar = () => {
                 ? "bg-[#F4E6C3] font-bold shadow-sm"
                 : "bg-[#D8A75B] hover:bg-[#C99243]"
             }`}>
-          <a href="/collections"> Collections </a>
+          <Link to="/collections"> Collections </Link>
         </li>
 
         <li className={`${navItem} ${
@@ -171,7 +171,7 @@ const PrivateNavbar = () => {
                 ? "bg-[#F4E6C3] font-bold shadow-sm"
                 : "bg-[#D8A75B] hover:bg-[#C99243]"
             }`}>
-          <a href="/search" > Search </a>
+          <Link to="/search" > Search </Link>
         </li>
         
       </ul>

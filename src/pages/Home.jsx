@@ -280,19 +280,21 @@ function Home() {
 
               </ul>
 
+              {/* Right Arrow */}
+              <button
+                onClick={() =>
+                  recipeScrollRef.current?.scrollBy({
+                    left: 300,
+                    behavior: "smooth",
+                  })
+                }
+                className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
+              >
+                ▶
+              </button>
+
             </div>
-            {/* Right Arrow */}
-            <button
-              onClick={() =>
-                recipeScrollRef.current?.scrollBy({
-                  left: 300,
-                  behavior: "smooth",
-                })
-              }
-              className="hidden sm:flex xl:hidden items-center justify-center w-10 h-10 rounded-full bg-[#D8A75B]/75 hover:bg-[#C99243]/75"
-            >
-              ▶
-            </button>
+            
           </div>
 
         )}

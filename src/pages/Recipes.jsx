@@ -49,9 +49,12 @@ function Recipes() {
   return (
     <div>
 
-      <h1>Recipes Page</h1> 
+      <br></br>
+      <br></br>
 
-      <ul>
+      <h1 className="text-[#4A2C2A] text-4xl flex flex-col items-center">Recipe Archive</h1> 
+
+      <ul className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
 
         {recipeData && recipeData.map((recipe, index) => {
 
@@ -61,48 +64,86 @@ function Recipes() {
               : `/recipe/${recipe.recipe_id}`;
 
           return (
-            <li key={index}>
+
+            <li key={index} className="bg-white p-4 rounded-lg shadow-md overflow-hidden flex flex-col transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
 
               <Link to={recipeRoute}>
 
                 {recipe.source === "api" && (
-                  <img
-                    src={apiLogo}
-                    alt="API Recipe"
-                    className="api-icon"
-                  />
+
+                  <div className="flex items-center gap-2 mb-2">
+
+                    <img
+                      src={apiLogo}
+                      alt="API Recipe"
+                      className="w-6 h-6"
+                    />
+
+                    <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">{recipe.title}</h2>
+
+                  </div>
+
                 )}
-              
-                <h2>{recipe.title}</h2>
 
-                <img src={recipe.image} alt={recipe.title}></img>
+                {recipe.source === "user" && (
 
-                <p><span>Description: </span>{recipe.description}</p>
+                  <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2" >{recipe.title}</h2>
 
-                <p><span>Cook Time: </span>{recipe.cook_time} min</p>
+                )}
 
-                <p><span>Prep Time: </span>{recipe.prep_time} min</p>
+                <img 
+                  src={recipe.image} 
+                  alt={recipe.title}
+                  className="w-full h-40 object-cover rounded-md mb-2"
+                ></img>
 
-                <p><span>Serving Size: </span>{recipe.serving_size}</p>
+                <p className="text-[#4A2C2A]">
+                  <span className="font-semibold">Cook Time: </span>{recipe.cook_time} min
+                </p>
+
+                <p className="text-[#4A2C2A]">
+                  <span className="font-semibold">Prep Time: </span>
+                  {recipe.prep_time ?? "N/A"}
+                </p>
+
+                <p className="text-[#4A2C2A]">
+                  <span className="font-semibold">Serving Size: </span>{recipe.serving_size}
+                </p>
+
+                <p className="text-[#4A2C2A]">
+                  <span className="font-semibold">Description: </span>
+                  {recipe.description?.replace(/<[^>]*>/g, "")
+                    .slice(0, 100)}
+                    ...
+                </p>
+
 
               </Link>
-
-              <br></br>
 
             </li>
 
           );
 
         })}
-            <li>
 
-      <button onClick={() => navigate('/addrecipe')}>
-        + Add Recipe
-      </button>
+        <li>
+          <button
+            onClick={() => navigate("/addrecipe")}
+            className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
+          >
+            <span className="text-6xl text-[#6E8B5B]">+</span>
 
-            </li>
+            <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
+              Add New Recipe
+            </p>
 
-        </ul>
+            <p className="text-sm text-gray-600">
+              Create your own recipe
+            </p>
+          </button>
+        </li>
+
+      </ul>
 
     </div>
   )
