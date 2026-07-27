@@ -140,43 +140,143 @@ function Collections() {
   return (
     <div>
 
-      <h1>Collections Page</h1>
+      <br></br>
+      <br></br>
+
+      <h1 className="text-[#4A2C2A] text-4xl flex flex-col items-center">Collection Shelf</h1>
 
       {collectionData.length === 0 ? (
-        <p> No collections yet</p>
+
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
+
+          <p> No collections yet</p>
+
+          <div>
+            <button 
+              onClick={() => {
+                setShowForm(true);
+                setEditingCollection(null);
+              }}
+              className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
+            >
+              <span className="text-6xl text-[#6E8B5B]">+</span>
+
+              <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
+                Create Collection
+              </p>
+
+              <p className="text-sm text-gray-600">
+                Create a Collection for your recipes
+              </p>
+
+            </button>
+
+            {showForm && !editingCollection && (
+              <CollectionForm
+                onClose={() => setShowForm(false)}
+                onSubmit={handleAddCollection}
+              />
+            )}
+
+          </div>
+        </div>
+
       ) : (
         <div>
 
-          <ul>
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
 
             {collectionData && collectionData.map((collection, index) => {
+
               return (
-                <li key={index}>
 
-                  <Link to={`/collection/${collection.collection_id}`}>
-                    <h2>{collection.collection_name}</h2>
-                    
-                    <p>Description: {collection.description}</p>
-                  </Link>
-                  <button onClick={() => {
-                    setEditingCollection(collection);
-                  }}>
-                    Edit
-                  </button>
+                <li key={index} className="flex-none w-64">
 
-                  {editingCollection?.collection_id === collection.collection_id && (
-                    <CollectionForm
-                      onClose={() => {
-                        setEditingCollection(null);
+                  <div  className="relative bg-[url('src/pages/assets/images/greenCover.png')] bg-cover bg-center h-auto min-h-64 p-4 shadow-md rounded-l-md w-full transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+
+                    <div className="absolute inset-0 pointer-events-none bg-linear-to-br from-white/20 via-transparent to-black/20"></div>
+
+                    <div className="absolute left-0 top-0 h-full w-5 bg-[#6b3f2a] border-r border-[#4A2C2A] shadow-inner"></div>
+
+                    <div className="relative z-10 pl-8 pr-4 pt-4">
+
+                      <Link to={`/collection/${collection.collection_id}`}>
+
+                        <div className=" text-center text-[#4A2C2A] line-clamp-2 min-h-14 mx-6 mt-6 rounded bg-[#F8F3E8]/90 py-2 shadow">
+
+                          <h2 className="text-xl font-bold">{collection.collection_name}</h2>
+                          
+                          <p>🍽 {collection.recipe_count} Recipes</p>
+
+                        </div>
+
+                      </Link>
+
+                      <div className="mt-5 border-b border-[#D8A75B]"/>
+
+                      <div className="border-b border-[#D8A75B]"></div>
+
+                      <details className="group mt-3">
+
+                        <summary className="list-none cursor-pointer rounded-md bg-[#F8F3E8] px-4 py-2 text-center font-semibold text-[#4A2C2A] shadow-md transition hover:bg-[#EFE6D2]">
+                            📖 About this Cookbook
+                        </summary>
+
+                        <div className="mt-3 rounded-md bg-[#F8F3E8] p-3 shadow-inner">
+
+                          <p className="text-sm text-[#4A2C2A] leading-relaxed">
+                              {collection.description
+                              ?.replace(/<[^>]*>/g, "")
+                              .slice(0, 150)}
+                          </p>
+
+                        </div>
+
+                        <div className="overflow-hidden transition-all duration-300 group-open:mt-4"></div>
+
+                      </details>
+                        
+                      </div>
+
+                      <div className="absolute right-1 top-1 bottom-1 w-2 bg-[#F8F3E8] rounded-r-sm shadow-inner pointer-events-none">
+                        <div className="w-0.5 bg-[#FDFBF6]"></div>
+                        <div className="w-0.5 bg-[#F3EBDD]"></div>
+                        <div className="w-0.5 bg-[#E8DCC5]"></div>
+                      </div>
+
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2">
+
+                    <button 
+                      onClick={() => {
+                        setEditingCollection(collection);
                       }}
-                      onSubmit={handleEditCollection}
-                      initialData={editingCollection}
-                    />
-                  )}
+                      className="px-4 py-2 rounded-lg bg-[#6E8B5B] text-white hover:bg-[#5E774D]"
+                    >
+                      Edit
+                    </button>
 
-                  <button onClick={() => handleDeleteCollection(collection.collection_id)}>
-                      Delete Collection
-                  </button>
+                    {editingCollection?.collection_id === collection.collection_id && (
+                      <CollectionForm
+                        onClose={() => {
+                          setEditingCollection(null);
+                        }}
+                        onSubmit={handleEditCollection}
+                        initialData={editingCollection}
+                      />
+                    )}
+
+                    <button 
+                    onClick={() => 
+                      handleDeleteCollection(collection.collection_id)
+                    }
+                    className="px-4 py-2 rounded-lg bg-[#A44A3F] text-white hover:bg-[#8C3E35]"
+                    >
+                        Delete Collection
+                    </button>
+
+                  </div>
 
                   <br></br>
 
@@ -186,28 +286,39 @@ function Collections() {
 
             })}
 
+            <div>
+              <button 
+                onClick={() => {
+                  setShowForm(true);
+                  setEditingCollection(null);
+                }}
+                className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
+              >
+                <span className="text-6xl text-[#6E8B5B]">+</span>
+
+                <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
+                  Create Collection
+                </p>
+
+                <p className="text-sm text-gray-600">
+                  Create a Collection for your recipes
+                </p>
+
+              </button>
+
+              {showForm && !editingCollection && (
+                <CollectionForm
+                  onClose={() => setShowForm(false)}
+                  onSubmit={handleAddCollection}
+                />
+              )}
+
+            </div>
+
           </ul>
           
         </div>
       )}
-
-      <div>
-        <button 
-          onClick={() => {
-          setShowForm(true);
-          setEditingCollection(null);
-          }}>
-            + Create Collection
-        </button>
-
-        {showForm && !editingCollection && (
-          <CollectionForm
-            onClose={() => setShowForm(false)}
-            onSubmit={handleAddCollection}
-          />
-)}
-
-      </div>
 
     </div>
   )

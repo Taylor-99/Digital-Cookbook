@@ -54,96 +54,134 @@ function Recipes() {
 
       <h1 className="text-[#4A2C2A] text-4xl flex flex-col items-center">Recipe Archive</h1> 
 
-      <ul className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
+      {recipeData.length === 0 ? (
 
-        {recipeData && recipeData.map((recipe, index) => {
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
 
-          const recipeRoute =
-            recipe.source === "api"
-              ? `/search/${recipe.spoonacular_id}`
-              : `/recipe/${recipe.recipe_id}`;
+          <p> No Recipes yet</p>
 
-          return (
+          <div>
 
-            <li key={index} className="bg-white p-4 rounded-lg shadow-md overflow-hidden flex flex-col transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
+            <button
+              onClick={() => navigate("/addrecipe")}
+              className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
+            >
+              <span className="text-6xl text-[#6E8B5B]">+</span>
 
-              <Link to={recipeRoute}>
+              <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
+                Add New Recipe
+              </p>
 
-                {recipe.source === "api" && (
+              <p className="text-sm text-gray-600">
+                Create your own recipe
+              </p>
+            </button>
 
-                  <div className="flex items-center gap-2 mb-2">
+          </div>
 
-                    <img
-                      src={apiLogo}
-                      alt="API Recipe"
-                      className="w-6 h-6"
-                    />
+        </div>
+          
+      ) : (
 
-                    <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">{recipe.title}</h2>
+        <div>
 
-                  </div>
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6 px-6 py-6">
 
-                )}
+            {recipeData && recipeData.map((recipe, index) => {
 
-                {recipe.source === "user" && (
+              const recipeRoute =
+                recipe.source === "api"
+                  ? `/search/${recipe.spoonacular_id}`
+                  : `/recipe/${recipe.recipe_id}`;
 
-                  <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2" >{recipe.title}</h2>
+              return (
 
-                )}
+                <li key={index} className="bg-white p-4 rounded-lg shadow-md overflow-hidden flex flex-col transition-all duration-200 hover:shadow-xl hover:-translate-y-1">
 
-                <img 
-                  src={recipe.image} 
-                  alt={recipe.title}
-                  className="w-full h-40 object-cover rounded-md mb-2"
-                ></img>
+                  <Link to={recipeRoute}>
 
-                <p className="text-[#4A2C2A]">
-                  <span className="font-semibold">Cook Time: </span>{recipe.cook_time} min
+                    {recipe.source === "api" && (
+
+                      <div className="flex items-center gap-2 mb-2">
+
+                        <img
+                          src={apiLogo}
+                          alt="API Recipe"
+                          className="w-6 h-6"
+                        />
+
+                        <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2">{recipe.title}</h2>
+
+                      </div>
+
+                    )}
+
+                    {recipe.source === "user" && (
+
+                      <h2 className="text-xl font-bold text-[#4A2C2A] line-clamp-2" >{recipe.title}</h2>
+
+                    )}
+
+                    <img 
+                      src={recipe.image} 
+                      alt={recipe.title}
+                      className="w-full h-40 object-cover rounded-md mb-2"
+                    ></img>
+
+                    <p className="text-[#4A2C2A]">
+                      <span className="font-semibold">Cook Time: </span>{recipe.cook_time} min
+                    </p>
+
+                    <p className="text-[#4A2C2A]">
+                      <span className="font-semibold">Prep Time: </span>
+                      {recipe.prep_time ?? "N/A"}
+                    </p>
+
+                    <p className="text-[#4A2C2A]">
+                      <span className="font-semibold">Serving Size: </span>{recipe.serving_size}
+                    </p>
+
+                    <p className="text-[#4A2C2A]">
+                      <span className="font-semibold">Description: </span>
+                      {recipe.description?.replace(/<[^>]*>/g, "")
+                        .slice(0, 100)}
+                        ...
+                    </p>
+
+
+                  </Link>
+
+                </li>
+
+              );
+
+            })}
+
+            <div>
+
+              <button
+                onClick={() => navigate("/addrecipe")}
+                className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
+              >
+                <span className="text-6xl text-[#6E8B5B]">+</span>
+
+                <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
+                  Add New Recipe
                 </p>
 
-                <p className="text-[#4A2C2A]">
-                  <span className="font-semibold">Prep Time: </span>
-                  {recipe.prep_time ?? "N/A"}
+                <p className="text-sm text-gray-600">
+                  Create your own recipe
                 </p>
+              </button>
 
-                <p className="text-[#4A2C2A]">
-                  <span className="font-semibold">Serving Size: </span>{recipe.serving_size}
-                </p>
+            </div>
 
-                <p className="text-[#4A2C2A]">
-                  <span className="font-semibold">Description: </span>
-                  {recipe.description?.replace(/<[^>]*>/g, "")
-                    .slice(0, 100)}
-                    ...
-                </p>
+          </ul>
 
+        </div>
 
-              </Link>
+      )}
 
-            </li>
-
-          );
-
-        })}
-
-        <li>
-          <button
-            onClick={() => navigate("/addrecipe")}
-            className="w-full h-full min-h-80 rounded-lg border-2 border-dashed border-[#6E8B5B] bg-[#F9F6F1] flex flex-col items-center justify-center transition hover:bg-[#EEF5E8] ver:scale-[1.02]"
-          >
-            <span className="text-6xl text-[#6E8B5B]">+</span>
-
-            <p className="mt-4 text-lg font-semibold text-[#4A2C2A]">
-              Add New Recipe
-            </p>
-
-            <p className="text-sm text-gray-600">
-              Create your own recipe
-            </p>
-          </button>
-        </li>
-
-      </ul>
 
     </div>
   )

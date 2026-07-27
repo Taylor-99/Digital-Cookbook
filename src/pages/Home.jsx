@@ -294,7 +294,7 @@ function Home() {
               </button>
 
             </div>
-            
+
           </div>
 
         )}
@@ -375,7 +375,6 @@ function Home() {
 
                               <p>🍽 {collection.recipe_count} Recipes</p>
                             </div>
-
                         
                           </Link>
 
